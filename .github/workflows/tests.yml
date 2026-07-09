@@ -41,6 +41,7 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_USERNAME: sail
       DB_PASSWORD: password
+      DB_DATABASE: testing
 
     steps:
       - name: Checkout code
