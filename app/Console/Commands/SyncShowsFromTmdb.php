@@ -2,11 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\SyncShowsFromTmdbJob;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('app:sync-shows-from-tmdb')]
+#[Signature('tmdb:sync')]
 #[Description('Sync shows from TMDB')]
 class SyncShowsFromTmdb extends Command
 {
@@ -15,10 +16,6 @@ class SyncShowsFromTmdb extends Command
      */
     public function handle()
     {
-        //
-    }
-
-    private function syncGenres(): void
-    {
+        SyncShowsFromTmdbJob::dispatch();
     }
 }
