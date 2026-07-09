@@ -20,9 +20,27 @@ permissions:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    services:
+      pgsql:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: testing
+          POSTGRES_USER: sail
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     strategy:
       matrix:
         php-version: ['8.4', '8.5']
+    env:
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: sail
+      DB_PASSWORD: password
 
     steps:
       - name: Checkout code
@@ -56,6 +74,9 @@ jobs:
 
       - name: Generate Application Key
         run: php artisan key:generate
+
+      - name: Run Migrations
+        run: php artisan migrate --force
 
       - name: Build Assets
         run: npm run build
