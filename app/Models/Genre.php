@@ -11,6 +11,6 @@ class Genre extends Model
 {
     public function shows(): BelongsToMany
     {
-        return $this->belongsToMany(Show::class);
+        return $this->belongsToMany(Show::class, 'show_genre');
     }
 }
