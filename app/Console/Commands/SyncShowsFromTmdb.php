@@ -17,5 +17,6 @@ class SyncShowsFromTmdb extends Command
     public function handle()
     {
         SyncShowsFromTmdbJob::dispatch();
+        $this->info('Sync job dispatched.');
     }
 }

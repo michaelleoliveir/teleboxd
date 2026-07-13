@@ -18,11 +18,15 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     use Queueable;
 
     private const TOTAL_PAGES = 10;
+    private int $created = 0;
+    private int $updated = 0;
 
     /**
      * Create a new job instance.
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     /**
      * Execute the job.
@@ -38,6 +42,8 @@ class SyncShowsFromTmdbJob implements ShouldQueue
                 Log::error("Error syncing shows on page {$page}: " . $th->getMessage());
             }
         }
+
+        Log::info("Sync complete: {$this->created} created, {$this->updated} updated.");
     }
 
     private function syncGenres(array $genres): array
@@ -71,6 +77,12 @@ class SyncShowsFromTmdbJob implements ShouldQueue
                 'synced_at' => now(),
             ]
         );
+
+        if ($model->wasRecentlyCreated) {
+            $this->created++;
+        } else {
+            $this->updated++;
+        }
 
         $model->genres()->sync($this->mapGenreIds($show['genre_ids'], $genresMap));
     }
