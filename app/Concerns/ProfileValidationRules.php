@@ -18,6 +18,7 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'bio' => $this->bioRules()
         ];
     }
 
@@ -44,8 +45,22 @@ trait ProfileValidationRules
             'email',
             'max:255',
             $userId === null
-                ? Rule::unique(User::class)
-                : Rule::unique(User::class)->ignore($userId),
+            ? Rule::unique(User::class)
+            : Rule::unique(User::class)->ignore($userId),
+        ];
+    }
+
+    /**
+     * Get the validation rules used to validate user bios.
+     *
+     * @return array<int, ValidationRule|array<string>|string>
+     */
+    protected function bioRules(): array
+    {
+        return [
+            'nullable',
+            'string',
+            'max:500'
         ];
     }
 }
