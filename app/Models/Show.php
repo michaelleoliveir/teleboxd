@@ -15,6 +15,7 @@ class Show extends Model
         'average_rating' => 'decimal:1'
     ];
 
+    /** @return BelongsToMany<Genre, $this> */
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class, 'show_genre');

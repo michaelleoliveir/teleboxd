@@ -15,6 +15,7 @@ class TmdbService
         $this->baseUrl ??= config('services.tmdb.base_url');
     }
 
+    /** @return array<int, array<string, mixed>> */
     public function getShows(int $page = 1): array
     {
         return $this->request()
@@ -25,6 +26,7 @@ class TmdbService
             ->json('results', []);
     }
 
+    /** @return array<int, array<string, mixed>> */
     public function getGenres(): array
     {
         return $this->request()

@@ -46,6 +46,10 @@ class SyncShowsFromTmdbJob implements ShouldQueue
         Log::info("Sync complete: {$this->created} created, {$this->updated} updated.");
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $genres
+     * @return array<int, int>
+     */
     private function syncGenres(array $genres): array
     {
         foreach ($genres as $genre) {
@@ -58,6 +62,10 @@ class SyncShowsFromTmdbJob implements ShouldQueue
         return Genre::pluck('id', 'tmdb_id')->toArray();
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $shows
+     * @param array<int, int> $genresMap
+     */
     private function syncPage(array $shows, array $genresMap): void
     {
         foreach ($shows as $show) {
@@ -65,6 +73,10 @@ class SyncShowsFromTmdbJob implements ShouldQueue
         }
     }
 
+    /**
+     * @param array<int|string, mixed> $show
+     * @param array<int, int> $genresMap
+     */
     private function syncShows(array $show, array $genresMap): void
     {
         $model = Show::updateOrCreate(
@@ -87,6 +99,11 @@ class SyncShowsFromTmdbJob implements ShouldQueue
         $model->genres()->sync($this->mapGenreIds($show['genre_ids'], $genresMap));
     }
 
+    /**
+     * @param array<int, int> $tmdbGenreIds
+     * @param array<int, int> $genresMap
+     * @return array<int, int>
+     */
     private function mapGenreIds(array $tmdbGenreIds, array $genresMap): array
     {
         return collect($tmdbGenreIds)
