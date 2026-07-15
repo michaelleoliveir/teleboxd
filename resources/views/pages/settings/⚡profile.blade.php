@@ -3,17 +3,23 @@
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Flux\Flux;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
 new #[Title('Profile settings')] class extends Component {
     use ProfileValidationRules;
+    use WithFileUploads;
 
     public string $name = '';
     public string $email = '';
+    public ?string $bio = null;
+    public ?TemporaryUploadedFile $avatar = null;
 
     /**
      * Mount the component.
@@ -22,6 +28,7 @@ new #[Title('Profile settings')] class extends Component {
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->bio = Auth::user()->bio ?? '';
     }
 
     /**
@@ -34,6 +41,10 @@ new #[Title('Profile settings')] class extends Component {
         $validated = $this->validate($this->profileRules($user->id));
 
         $user->fill($validated);
+
+        if ($this->avatar) {
+            $user->avatar_path = $this->avatar->store('avatars', 'public');
+        }
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -65,13 +76,13 @@ new #[Title('Profile settings')] class extends Component {
     #[Computed]
     public function hasUnverifiedEmail(): bool
     {
-        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+        return Auth::user() instanceof MustVerifyEmail && !Auth::user()->hasVerifiedEmail();
     }
 
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
+        return !Auth::user() instanceof MustVerifyEmail
             || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
 }; ?>
@@ -83,6 +94,14 @@ new #[Title('Profile settings')] class extends Component {
 
     <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
+            <div>
+                @if (Auth::user()->avatar_path)
+                    <img src="{{ Storage::url(Auth::user()->avatar_path) }}" alt="Avatar"
+                        class="w-12.5 h-12.5 rounded-full mb-2">
+                @endif
+                <flux:input wire:model="avatar" type="file" accept="image/*" :label="__('Avatar')" />
+            </div>
+            
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
             <div>
@@ -99,13 +118,15 @@ new #[Title('Profile settings')] class extends Component {
                         </flux:text>
 
                         @if (session('status') === 'verification-link-sent')
-                            <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
+                            <flux:text class="mt-2 font-medium !dark:text-green-400 text-green-600!">
                                 {{ __('A new verification link has been sent to your email address.') }}
                             </flux:text>
                         @endif
                     </div>
                 @endif
             </div>
+
+            <flux:textarea wire:model="bio" :label="__('Bio')" rows="3" />
 
             <div class="flex items-center gap-4">
                 <div class="flex items-center justify-end">
