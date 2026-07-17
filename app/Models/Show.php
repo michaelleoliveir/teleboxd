@@ -20,4 +20,10 @@ class Show extends Model
     {
         return $this->belongsToMany(Genre::class, 'show_genre');
     }
+
+    /** @return BelongsToMany<Actor, $this> */
+    public function actors(): BelongsToMany
+    {
+        return $this->belongsToMany(Actor::class, 'show_actor')->withPivot('character', 'popularity_order')->orderByPivot('popularity_order');
+    }
 }
