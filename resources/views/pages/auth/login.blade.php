@@ -22,7 +22,7 @@
             />
 
             <!-- Password -->
-            <div class="relative">
+            <div class="flex flex-col gap-1">
                 <flux:input
                     name="password"
                     :label="__('Password')"
@@ -34,7 +34,7 @@
                 />
 
                 @if (Route::has('password.request'))
-                    <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
+                    <flux:link class="self-end text-xs mt-2" :href="route('password.request')" wire:navigate>
                         {{ __('Forgot your password?') }}
                     </flux:link>
                 @endif
@@ -44,11 +44,15 @@
             <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
 
             <div class="flex items-center justify-end">
-                <flux:button variant="primary" type="submit" class="w-full" data-test="login-button">
-                    {{ __('Log in') }}
+                <flux:button variant="primary" type="submit" class="w-full bg-tlbx-primary! text-white! hover:brightness-110!" data-test="login-button">
+                    {{ __('Sign in') }}
                 </flux:button>
             </div>
         </form>
 
+        <div class="space-x-1 text-center text-sm text-tlbx-muted rtl:space-x-reverse">
+            <span>{{ __('New to Teleboxd?') }}</span>
+            <flux:link :href="route('register')" wire:navigate>{{ __('Create an account') }}</flux:link>
+        </div>
     </div>
 </x-layouts::auth>

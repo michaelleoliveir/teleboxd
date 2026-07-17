@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome', [
-        'shows' => Show::query()->latest('synced_at')->limit(40)->get(),
+        'shows' => Show::query()->whereNotNull('poster_path')->latest('synced_at')->limit(40)->get(),
     ]);
 })->name('home');
 
