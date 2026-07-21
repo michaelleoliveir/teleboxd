@@ -87,6 +87,7 @@ class SyncShowsFromTmdbJob implements ShouldQueue
             [
                 'name' => $show['name'],
                 'overview' => $show['overview'],
+                'popularity' => $show['popularity'] ?? null,
                 'poster_path' => $show['poster_path'],
                 'first_air_date' => $show['first_air_date'] ?? null,
                 'synced_at' => now(),

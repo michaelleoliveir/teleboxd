@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actor;
 use App\Models\Genre;
 use App\Models\Show;
 use Illuminate\Contracts\View\View;
@@ -12,18 +13,14 @@ class ShowController extends Controller
     public function index(Request $request): View
     {
         $shows = Show::query()
-                ->whereNotNull('poster_path')
-                ->when($request->filled('genre'), fn($q) => 
-                    $q->whereHas('genres', fn($q) => 
-                        $q->where('genres.id', $request->integer('genre'))))
-                ->orderByDesc('first_air_date')
-                ->paginate(24)
-                ->withQueryString();
-
-        $genres = Genre::query()
-                ->orderBy('name')
+                ->with('actors')
+                ->whereNotNull(['poster_path', 'popularity'])
+                ->orderByDesc('popularity')
+                ->limit(9)
                 ->get();
 
-        return view('catalog', compact('shows', 'genres'));
+        $actors = $shows->pluck('actors')->flatten()->unique('id')->whereNotNull('profile_path')->take(9);
+
+        return view('catalog', compact('shows', 'actors'));
     }
 }

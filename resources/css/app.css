@@ -78,3 +78,26 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+.tlbx-scrollrow {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-tlbx-border) transparent;
+}
+
+.tlbx-scrollrow::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tlbx-scrollrow::-webkit-scrollbar-thumb {
+    background: var(--color-tlbx-border);
+    border-radius: 3px;
+}
+
+.tlbx-scrollrow::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tlbx-stripe {
+    background-color: var(--color-tlbx-card);
+    background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, .05) 0 10px, rgba(0, 0, 0, .05) 10px 20px);
+}
