@@ -13,8 +13,8 @@
                 @if (Route::has('login'))
                     <nav class="flex items-center gap-4">
                         @auth
-                            <a href="{{ route('dashboard') }}" class="text-sm font-medium text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white" wire:navigate>
-                                {{ __('Dashboard') }}
+                            <a href="{{ route('shows.index') }}" class="text-sm font-medium text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white" wire:navigate>
+                                {{ __('Menu') }}
                             </a>
                         @else
                             <a href="{{ route('login') }}" class="text-sm font-medium text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white" wire:navigate>
