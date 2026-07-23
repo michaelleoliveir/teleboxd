@@ -26,6 +26,13 @@
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
+
+    --color-tlbx-bg: #f4f5f6;
+    --color-tlbx-card: #ffffff;
+    --color-tlbx-border: #dde1e4;
+    --color-tlbx-muted: #55677a;
+    --color-tlbx-primary: #00c030;
+    --color-tlbx-orange: #ff8000;
 }
 
 @layer theme {
@@ -33,6 +40,13 @@
         --color-accent: var(--color-white);
         --color-accent-content: var(--color-white);
         --color-accent-foreground: var(--color-neutral-800);
+
+        --color-tlbx-bg: #14181c;
+        --color-tlbx-card: #1f2937;
+        --color-tlbx-border: #384047;
+        --color-tlbx-muted: #99aabb;
+        --color-tlbx-primary: #00c030;
+        --color-tlbx-orange: #ff8000;
     }
 }
 
@@ -64,3 +78,26 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+.tlbx-scrollrow {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-tlbx-border) transparent;
+}
+
+.tlbx-scrollrow::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tlbx-scrollrow::-webkit-scrollbar-thumb {
+    background: var(--color-tlbx-border);
+    border-radius: 3px;
+}
+
+.tlbx-scrollrow::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tlbx-stripe {
+    background-color: var(--color-tlbx-card);
+    background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, .05) 0 10px, rgba(0, 0, 0, .05) 10px 20px);
+}

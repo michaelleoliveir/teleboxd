@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\ResetUserPassword;
+use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -35,7 +35,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureActions(): void
     {
-        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        Fortify::createUsersUsing(CreateNewUser::class);
     }
 
     /**
@@ -46,8 +46,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(fn () => view('pages::auth.login'));
         Fortify::verifyEmailView(fn () => view('pages::auth.verify-email'));
         Fortify::confirmPasswordView(fn () => view('pages::auth.confirm-password'));
-        Fortify::resetPasswordView(fn () => view('pages::auth.reset-password'));
-        Fortify::requestPasswordResetLinkView(fn () => view('pages::auth.forgot-password'));
+        Fortify::registerView(fn () => view('pages::auth.register'));
     }
 
     /**

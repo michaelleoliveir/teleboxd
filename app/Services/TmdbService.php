@@ -36,6 +36,14 @@ class TmdbService
             ->json('genres', []);
     }
 
+    /** @return array<int, array<string, mixed>> */
+    public function getCredits(int $showId): array
+    {
+        return $this->request()
+            ->get("/tv/$showId/credits")
+            ->json('cast', []);
+    }
+
     protected function request(): PendingRequest
     {
         return Http::withToken($this->token)

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Actor;
 use App\Models\Genre;
 use App\Models\Show;
 use App\Services\TmdbService;
@@ -11,7 +12,7 @@ use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Facades\Log;
 
-#[Timeout(300)]
+#[Timeout(600)]
 #[Tries(3)]
 class SyncShowsFromTmdbJob implements ShouldQueue
 {
@@ -37,7 +38,7 @@ class SyncShowsFromTmdbJob implements ShouldQueue
 
         for ($page = 1; $page <= self::TOTAL_PAGES; $page++) {
             try {
-                $this->syncPage($tmdb->getShows($page), $genresMap);
+                $this->syncPage($tmdb->getShows($page), $genresMap, $tmdb);
             } catch (\Throwable $th) {
                 Log::error("Error syncing shows on page {$page}: " . $th->getMessage());
             }
@@ -65,25 +66,28 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     /**
      * @param array<int, array<string, mixed>> $shows
      * @param array<int, int> $genresMap
+     * @param TmdbService $tmdb
      */
-    private function syncPage(array $shows, array $genresMap): void
+    private function syncPage(array $shows, array $genresMap, TmdbService $tmdb): void
     {
         foreach ($shows as $show) {
-            $this->syncShows($show, $genresMap);
+            $this->syncShows($show, $genresMap, $tmdb);
         }
     }
 
     /**
      * @param array<int|string, mixed> $show
      * @param array<int, int> $genresMap
+     * @param TmdbService $tmdb
      */
-    private function syncShows(array $show, array $genresMap): void
+    private function syncShows(array $show, array $genresMap, TmdbService $tmdb): void
     {
         $model = Show::updateOrCreate(
             ['tmdb_id' => $show['id']],
             [
                 'name' => $show['name'],
                 'overview' => $show['overview'],
+                'popularity' => $show['popularity'] ?? null,
                 'poster_path' => $show['poster_path'],
                 'first_air_date' => $show['first_air_date'] ?? null,
                 'synced_at' => now(),
@@ -97,6 +101,35 @@ class SyncShowsFromTmdbJob implements ShouldQueue
         }
 
         $model->genres()->sync($this->mapGenreIds($show['genre_ids'], $genresMap));
+        $this->syncActors($model, $tmdb->getCredits($show['id']));
+    }
+
+    /**
+     * @param Show $show
+     * @param array<int|string, mixed> $cast
+     */
+    private function syncActors(Show $show, array $cast): void
+    {
+        $pivotData = [];
+        $cast = collect($cast)
+            ->sortBy('order')
+            ->take(5);
+
+        foreach ($cast as $actor) {
+            $model = Actor::updateOrCreate([
+                'tmdb_id' => $actor['id']
+            ], [
+                'name' => $actor['name'],
+                'profile_path' => $actor['profile_path']
+            ]);
+
+            $pivotData[$model->id] = [
+                'character' => $actor['character'],
+                'popularity_order' => $actor['order']
+            ];
+        };
+
+        $show->actors()->sync($pivotData);
     }
 
     /**
