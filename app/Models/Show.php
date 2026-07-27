@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['tmdb_id', 'name', 'overview', 'poster_path', 'average_rating', 'reviews_count', 'first_air_date', 'synced_at', 'popularity'])]
 class Show extends Model
@@ -26,5 +27,23 @@ class Show extends Model
     public function actors(): BelongsToMany
     {
         return $this->belongsToMany(Actor::class, 'show_actor')->withPivot('character', 'popularity_order')->orderByPivot('popularity_order');
+    }
+
+    /** @return HasMany<Review, $this> */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function favoritedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'favorites');
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function wishlistedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'wishlists');
     }
 }
