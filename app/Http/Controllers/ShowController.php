@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Actor;
-use App\Models\Genre;
 use App\Models\Show;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -22,5 +20,12 @@ class ShowController extends Controller
         $actors = $shows->pluck('actors')->flatten()->unique('id')->whereNotNull('profile_path')->take(9);
 
         return view('catalog', compact('shows', 'actors'));
+    }
+
+    public function show(Show $show): View
+    {
+        $show->load(['genres', 'actors', 'reviews.user']);
+
+        return view('show', compact('show'));
     }
 }
