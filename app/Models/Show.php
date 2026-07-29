@@ -38,7 +38,7 @@ class Show extends Model
     /** @return BelongsToMany<User, $this> */
     public function favoritedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'favorites');
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }
 
     /** @return BelongsToMany<User, $this> */

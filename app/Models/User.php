@@ -64,7 +64,7 @@ class User extends Authenticatable
     /** @return BelongsToMany<Show, $this> */
     public function favorites(): BelongsToMany
     {
-        return $this->belongsToMany(Show::class, 'favorites');
+        return $this->belongsToMany(Show::class, 'favorites')->withTimestamps();
     }
 
     /** @return BelongsToMany<Show, $this> */
