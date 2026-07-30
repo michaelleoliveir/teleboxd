@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('show_id')->constrained('shows');
             $table->text('content')->nullable();
-            $table->decimal('rating', 2, 1);
+            $table->unsignedTinyInteger('rating');
             $table->softDeletes();
             $table->timestamps();
 

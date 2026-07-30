@@ -16,7 +16,7 @@ class Review extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'rating' => 'decimal:1'
+        'rating' => 'integer'
     ];
 
     /** @return BelongsTo<User, $this> */
