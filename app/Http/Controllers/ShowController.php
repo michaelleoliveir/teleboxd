@@ -12,8 +12,8 @@ class ShowController extends Controller
     {
         $shows = Show::query()
                 ->with('actors')
-                ->whereNotNull(['poster_path', 'popularity'])
-                ->orderByDesc('popularity')
+                ->whereNotNull(['poster_path', 'popularity', 'first_air_date'])
+                ->orderByRaw('popularity - ((CURRENT_DATE - first_air_date) * 7.5) DESC')
                 ->limit(9)
                 ->get();
 
