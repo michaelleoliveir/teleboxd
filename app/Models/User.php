@@ -70,7 +70,7 @@ class User extends Authenticatable
     /** @return BelongsToMany<Show, $this> */
     public function wishlists(): BelongsToMany
     {
-        return $this->belongsToMany(Show::class, 'wishlists');
+        return $this->belongsToMany(Show::class, 'wishlists')->withTimestamps();
     }
 
     /** @return HasMany<Review, $this> */

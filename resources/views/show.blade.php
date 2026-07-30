@@ -48,11 +48,9 @@
             <div class="mt-6 flex flex-wrap gap-3">
                 <livewire:pages::shows.favorite-button :show="$show" />
 
-                {{-- quero assistir / review viram componentes Livewire aqui --}}
-                <div class="flex items-center gap-2 rounded-sm border border-tlbx-border px-4 py-2.5 text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-                    <flux:icon.bookmark class="size-4" />
-                    {{ __('Add to watchlist') }}
-                </div>
+                <livewire:pages::shows.wishlist-button :show="$show" />
+
+                {{-- review vira componente Livewire aqui --}}
                 <div class="flex items-center gap-2 rounded-sm border border-tlbx-border px-4 py-2.5 text-sm font-semibold text-zinc-700 dark:text-zinc-200">
                     <flux:icon.pencil-square class="size-4" />
                     {{ __('Review') }}

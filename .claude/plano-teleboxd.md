@@ -163,9 +163,9 @@ Confirmado nesta rodada:
 - "Reviews famosas" = mais curtidas dentro da plataforma
 - Escala de 0 a 5 estrelas
 - Usuário pode ter mais de uma review por série (rewatch)
+- Só estrelas inteiras (0, 1, 2, 3, 4, 5) — sem meia estrela
 
 Ainda em aberto:
-- [ ] Meia estrela (0.5, 1.5, 2.5...) ou só estrelas inteiras?
 - [ ] Recalcular `average_rating`/`likes_count` de forma síncrona (na
       própria request) ou assíncrona (job em fila)? Síncrono é mais simples
       pro MVP; assíncrono evita que a criação de uma review fique lenta se

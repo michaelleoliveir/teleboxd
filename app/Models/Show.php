@@ -44,6 +44,6 @@ class Show extends Model
     /** @return BelongsToMany<User, $this> */
     public function wishlistedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'wishlists');
+        return $this->belongsToMany(User::class, 'wishlists')->withTimestamps();
     }
 }
