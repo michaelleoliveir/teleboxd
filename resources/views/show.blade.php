@@ -31,13 +31,7 @@
                 </div>
             @endif
 
-            <div class="mt-5 flex items-center gap-3">
-                <x-star-rating :rating="$show->average_rating" size="size-5" />
-                <span class="font-serif text-lg text-zinc-900 dark:text-white">{{ $show->average_rating ?? '—' }}</span>
-                <span class="text-xs text-tlbx-muted">
-                    {{ trans_choice(':count review|:count reviews', $show->reviews_count, ['count' => $show->reviews_count]) }}
-                </span>
-            </div>
+            <livewire:pages::shows.rating-summary :show="$show" />
 
             @if ($show->overview)
                 <p class="mt-6 max-w-2xl text-[15px] leading-relaxed text-zinc-700 dark:text-zinc-300">
@@ -45,16 +39,10 @@
                 </p>
             @endif
 
-            <div class="mt-6 flex flex-wrap gap-3">
+            <div class="mt-6 flex flex-wrap items-start gap-3">
                 <livewire:pages::shows.favorite-button :show="$show" />
 
                 <livewire:pages::shows.wishlist-button :show="$show" />
-
-                {{-- review vira componente Livewire aqui --}}
-                <div class="flex items-center gap-2 rounded-sm border border-tlbx-border px-4 py-2.5 text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-                    <flux:icon.pencil-square class="size-4" />
-                    {{ __('Review') }}
-                </div>
             </div>
         </div>
     </div>
@@ -90,38 +78,10 @@
         </section>
     @endif
 
-    <section>
-        <div class="mb-4 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ __('Reviews') }}</div>
+    <div class="mb-9 max-w-md">
+        <div class="mb-4 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ __('Write a review') }}</div>
+        <livewire:pages::shows.review-form :show="$show" />
+    </div>
 
-        @if ($show->reviews->isEmpty())
-            <p class="font-serif text-sm text-tlbx-muted italic">{{ __('No reviews yet. Be the first to review this show.') }}</p>
-        @else
-            <div class="divide-y divide-tlbx-border">
-                @foreach ($show->reviews as $review)
-                    <div class="flex gap-3 py-5 first:pt-0">
-                        <flux:avatar
-                            :name="$review->user?->name ?? __('Deleted user')"
-                            :initials="$review->user?->initials() ?? '?'"
-                            size="sm"
-                        />
-                        <div class="flex-1">
-                            <div class="flex flex-wrap items-baseline gap-2">
-                                <span class="text-sm font-semibold text-zinc-900 dark:text-white">
-                                    {{ $review->user?->name ?? __('Deleted user') }}
-                                </span>
-                                <x-star-rating :rating="$review->rating" />
-                                <span class="ml-auto text-xs text-tlbx-muted">{{ $review->created_at->diffForHumans() }}</span>
-                            </div>
-
-                            @if ($review->content)
-                                <p class="mt-2 font-serif text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-                                    {{ $review->content }}
-                                </p>
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </section>
+    <livewire:pages::shows.reviews-list :show="$show" />
 </x-layouts::app>
