@@ -12,12 +12,12 @@ class ReviewObserver
         $this->recalculate($review->show_id);
     }
 
-    public function deleted(Review $review)
+    public function deleted(Review $review): void
     {
         $this->recalculate($review->show_id);
     }
 
-    public function updated(Review $review)
+    public function updated(Review $review): void
     {
         if($review->wasChanged('rating')) {
             $this->recalculate($review->show_id);
