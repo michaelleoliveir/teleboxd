@@ -31,13 +31,13 @@
 
             <div class="tlbx-scrollrow flex gap-5 overflow-x-auto px-1 pb-3">
                 @foreach ($shows as $show)
-                    <div class="w-32 shrink-0">
+                    <a href="{{ route('shows.show', $show) }}" class="w-32 shrink-0">
                         <x-poster-card
                             :poster="$show->poster_path ? 'https://image.tmdb.org/t/p/w500'.$show->poster_path : null"
                             :title="$show->name"
                             :rating="$show->average_rating"
                         />
-                    </div>
+                    </a>
                 @endforeach
             </div>
         </section>
