@@ -11,7 +11,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/shows', [ShowController::class, 'index'])->name('shows.index');
+    Route::get('/home', [ShowController::class, 'index'])->name('shows.index');
     Route::get('/shows/{show}', [ShowController::class, 'show'])->name('shows.show');
 });
 

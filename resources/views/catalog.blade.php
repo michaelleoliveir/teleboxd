@@ -1,4 +1,4 @@
-<x-layouts::app :title="__('Shows')">
+<x-layouts::app :title="__('Home |')">
     <div class="mb-9 flex flex-wrap items-end justify-between gap-6">
         <div>
             <div class="mb-2 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ now()->format('F j, Y') }}</div>
