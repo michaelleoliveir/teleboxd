@@ -19,7 +19,7 @@ class ShowController extends Controller
 
         $actors = $shows->pluck('actors')->flatten()->unique('id')->whereNotNull('profile_path')->take(9);
 
-        return view('catalog', compact('shows', 'actors'));
+        return view('main', compact('shows', 'actors'));
     }
 
     public function show(Show $show): View
