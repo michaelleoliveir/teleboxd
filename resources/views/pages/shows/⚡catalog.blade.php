@@ -35,7 +35,13 @@ new class extends Component {
             ->when($this->search, fn($q, $search) => $q->where('name', 'ilike', "%{$search}%"))
             ->whereNotNull($sortTypes)
             ->orderBy($sortTypes, 'desc')
-            ->paginate(20);
+            ->paginate(24);
+    }
+
+    public function clearFilters(): void
+    {
+        $this->reset('search', 'genre', 'sort');
+        $this->resetPage();
     }
 };
 ?>
@@ -48,22 +54,38 @@ new class extends Component {
         </div>
     </div>
 
-    <div class="mb-8 flex flex-wrap items-center gap-4">
-        <flux:input wire:model.live.debounce.400ms="search" :placeholder="__('Search shows...')" icon="magnifying-glass"
-            autocomplete="off" class="max-w-xs" />
+    <div class="mb-8 flex flex-wrap items-end gap-6">
+        <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase">{{ __('Search') }}</span>
+            <flux:input wire:model.live.debounce.400ms="search" :placeholder="__('Search shows...')"
+                icon="magnifying-glass" autocomplete="off" class="w-56" />
+        </div>
 
-        <flux:select wire:model.live="genre" class="max-w-48">
-            <flux:select.option value="">{{ __('All genres') }}</flux:select.option>
-            @foreach ($this->genres as $g)
-                <flux:select.option value="{{ $g->id }}">{{ $g->name }}</flux:select.option>
-            @endforeach
-        </flux:select>
+        <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase">{{ __('Genre') }}</span>
+            <flux:select wire:model.live="genre" class="max-w-48">
+                <flux:select.option value="">{{ __('All genres') }}</flux:select.option>
+                @foreach ($this->genres as $g)
+                    <flux:select.option value="{{ $g->id }}">{{ $g->name }}</flux:select.option>
+                @endforeach
+            </flux:select>
+        </div>
 
-        <flux:select wire:model.live="sort" class="max-w-48">
-            <flux:select.option value="popular">{{ __('Most popular') }}</flux:select.option>
-            <flux:select.option value="rating">{{ __('Highest rated') }}</flux:select.option>
-            <flux:select.option value="recent">{{ __('Most recent') }}</flux:select.option>
-        </flux:select>
+        <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase">{{ __('Sort by') }}</span>
+            <flux:select wire:model.live="sort" class="max-w-48">
+                <flux:select.option value="popular">{{ __('Most popular') }}</flux:select.option>
+                <flux:select.option value="rating">{{ __('Highest rated') }}</flux:select.option>
+                <flux:select.option value="recent">{{ __('Most recent') }}</flux:select.option>
+            </flux:select>
+        </div>
+
+        @if ($this->search || $this->genre || $this->sort !== 'popular')
+            <button wire:click="clearFilters" type="button"
+                class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase underline-offset-4 cursor-pointer hover:text-tlbx-primary hover:underline">
+                {{ __('Clear filters') }}
+            </button>
+        @endif
     </div>
 
     @if ($this->shows->isEmpty())
@@ -79,7 +101,7 @@ new class extends Component {
         </div>
 
         <div class="mt-8">
-            {{ $this->shows->links() }}
+            {{ $this->shows->links('partials.pagination') }}
         </div>
     @endif
 </div>

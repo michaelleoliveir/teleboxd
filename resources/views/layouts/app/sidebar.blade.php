@@ -13,7 +13,7 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                <flux:sidebar.group class="grid">
                     <flux:sidebar.item icon="home" :href="route('shows.catalog')" :current="request()->routeIs('shows.catalog')" wire:navigate>
                         {{ __('Shows') }}
                     </flux:sidebar.item>
