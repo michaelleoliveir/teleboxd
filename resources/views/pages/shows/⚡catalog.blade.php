@@ -1,13 +1,85 @@
 <?php
 
 use Livewire\Component;
+use Livewire\WithPagination;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Genre;
+use App\Models\Show;
 
-new class extends Component
-{
-    //
+new class extends Component {
+    use WithPagination;
+
+    public ?string $search = null;
+    public ?int $genre = null;
+    public string $sort = 'popular';
+
+    #[Computed]
+    public function genres(): Collection
+    {
+        return Genre::orderBy('name')->get();
+    }
+
+    #[Computed]
+    public function shows(): LengthAwarePaginator
+    {
+        $sortTypes = match ($this->sort) {
+            'popular' => 'popularity',
+            'rating' => 'average_rating',
+            'recent' => 'first_air_date'
+        };
+
+        return Show::query()
+            ->when($this->genre, fn($q, $genreId) => $q->whereHas('genres', fn($q2) => $q2->where('id', $genreId)))
+            ->when($this->search, fn($q, $search) => $q->where('name', 'ilike', "%{$search}%"))
+            ->whereNotNull($sortTypes)
+            ->orderBy($sortTypes, 'desc')
+            ->paginate(20);
+    }
 };
 ?>
 
 <div>
-    {{-- I have not failed. I've just found 10,000 ways that won't work. - Thomas Edison --}}
+    <div class="mb-9 flex flex-wrap items-end justify-between gap-6">
+        <div>
+            <div class="mb-2 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ __('Catalog') }}</div>
+            <h1 class="font-serif text-3xl text-zinc-900 italic sm:text-4xl dark:text-white">{{ __('All shows') }}</h1>
+        </div>
+    </div>
+
+    <div class="mb-8 flex flex-wrap items-center gap-4">
+        <flux:input wire:model.live.debounce.400ms="search" :placeholder="__('Search shows...')" icon="magnifying-glass"
+            autocomplete="off" class="max-w-xs" />
+
+        <flux:select wire:model.live="genre" class="max-w-48">
+            <flux:select.option value="">{{ __('All genres') }}</flux:select.option>
+            @foreach ($this->genres as $g)
+                <flux:select.option value="{{ $g->id }}">{{ $g->name }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
+        <flux:select wire:model.live="sort" class="max-w-48">
+            <flux:select.option value="popular">{{ __('Most popular') }}</flux:select.option>
+            <flux:select.option value="rating">{{ __('Highest rated') }}</flux:select.option>
+            <flux:select.option value="recent">{{ __('Most recent') }}</flux:select.option>
+        </flux:select>
+    </div>
+
+    @if ($this->shows->isEmpty())
+        <p class="font-serif text-sm text-tlbx-muted italic">{{ __('No shows found.') }}</p>
+    @else
+        <div class="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            @foreach ($this->shows as $show)
+                <a href="{{ route('shows.show', $show) }}" wire:navigate>
+                    <x-poster-card :poster="$show->poster_path ? 'https://image.tmdb.org/t/p/w500' . $show->poster_path : null"
+                        :title="$show->name" :rating="$show->average_rating" />
+                </a>
+            @endforeach
+        </div>
+
+        <div class="mt-8">
+            {{ $this->shows->links() }}
+        </div>
+    @endif
 </div>
