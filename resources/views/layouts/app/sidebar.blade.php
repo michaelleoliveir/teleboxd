@@ -14,7 +14,7 @@
 
             <flux:sidebar.nav>
                 <flux:sidebar.group class="grid">
-                    <flux:sidebar.item icon="home" :href="route('shows.catalog')" :current="request()->routeIs('shows.catalog')" wire:navigate>
+                    <flux:sidebar.item icon="layout-grid" :href="route('shows.catalog')" :current="request()->routeIs('shows.catalog')" wire:navigate>
                         {{ __('Shows') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>

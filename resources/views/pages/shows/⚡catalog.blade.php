@@ -43,6 +43,13 @@ new class extends Component {
         $this->reset('search', 'genre', 'sort');
         $this->resetPage();
     }
+
+    public function updated(string $property): void
+    {
+        if (in_array($property, ['search', 'genre', 'sort'])) {
+            $this->resetPage();
+        }
+    }
 };
 ?>
 
