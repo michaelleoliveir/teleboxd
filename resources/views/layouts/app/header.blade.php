@@ -10,7 +10,7 @@
             <x-app-logo href="{{ route('shows.index') }}" wire:navigate />
 
             <flux:navbar class="-mb-px max-lg:hidden">
-                <flux:navbar.item icon="layout-grid" :href="route('shows.index')" :current="request()->routeIs('shows.index')" wire:navigate>
+                <flux:navbar.item icon="layout-grid" :href="route('shows.catalog')" :current="request()->routeIs('shows.catalog')" wire:navigate>
                     {{ __('Shows') }}
                 </flux:navbar.item>
             </flux:navbar>
@@ -53,8 +53,8 @@
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')">
-                    <flux:sidebar.item icon="layout-grid" :href="route('shows.index')" :current="request()->routeIs('shows.index')" wire:navigate>
-                        {{ __('Shows')  }}
+                    <flux:sidebar.item icon="layout-grid" :href="route('shows.catalog')" :current="request()->routeIs('shows.catalog')" wire:navigate>
+                        {{ __('Shows') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>

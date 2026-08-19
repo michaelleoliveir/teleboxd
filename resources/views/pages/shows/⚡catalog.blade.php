@@ -3,12 +3,13 @@
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Genre;
 use App\Models\Show;
 
-new class extends Component {
+new #[Title('All shows')] class extends Component {
     use WithPagination;
 
     public ?string $search = null;
@@ -25,7 +26,6 @@ new class extends Component {
     public function shows(): LengthAwarePaginator
     {
         $sortTypes = match ($this->sort) {
-            'popular' => 'popularity',
             'rating' => 'average_rating',
             'recent' => 'first_air_date',
             default => 'popularity'
