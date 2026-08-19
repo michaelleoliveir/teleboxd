@@ -3,7 +3,7 @@
         <div>
             <div class="mb-2 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ now()->format('F j, Y') }}</div>
             <h1 class="font-serif text-3xl text-zinc-900 italic sm:text-4xl dark:text-white">
-                {{ __('Welcome back, :name.', ['name' => auth()->user()->name]) }}
+                {{ __('Welcome back, :name.', ['name' => \Illuminate\Support\Facades\Auth::user()->name]) }}
             </h1>
         </div>
 

@@ -22,7 +22,7 @@
 
             <flux:spacer />
 
-            <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
+            <x-desktop-user-menu class="hidden lg:block" :name="\Illuminate\Support\Facades\Auth::user()->name" />
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
@@ -33,7 +33,7 @@
 
             <flux:dropdown position="top" align="end">
                 <flux:profile
-                    :initials="auth()->user()->initials()"
+                    :initials="\Illuminate\Support\Facades\Auth::user()->initials()"
                     icon-trailing="chevron-down"
                 />
 
@@ -42,13 +42,13 @@
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <flux:avatar
-                                    :name="auth()->user()->name"
-                                    :initials="auth()->user()->initials()"
+                                    :name="\Illuminate\Support\Facades\Auth::user()->name"
+                                    :initials="\Illuminate\Support\Facades\Auth::user()->initials()"
                                 />
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
+                                    <flux:heading class="truncate">{{ \Illuminate\Support\Facades\Auth::user()->name }}</flux:heading>
+                                    <flux:text class="truncate">{{ \Illuminate\Support\Facades\Auth::user()->email }}</flux:text>
                                 </div>
                             </div>
                         </div>

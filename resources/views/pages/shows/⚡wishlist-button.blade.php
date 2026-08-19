@@ -2,6 +2,7 @@
 
 use Livewire\Component;
 use App\Models\Show;
+use Illuminate\Support\Facades\Auth;
 
 new class extends Component {
     public Show $show;
@@ -10,20 +11,20 @@ new class extends Component {
     public function mount(Show $show): void
     {
         $this->show = $show;
-        $this->isWishlisted = auth()->user()?->wishlists()->where('show_id', $show->id)->exists() ?? false;
+        $this->isWishlisted = Auth::user()?->wishlists()->where('show_id', $show->id)->exists() ?? false;
     }
 
     public function toggle()
     {
-        if (auth()->check()) {
+        if (Auth::check()) {
             if ($this->isWishlisted) {
-                auth()->user()->wishlists()->detach($this->show->id);
+                Auth::user()->wishlists()->detach($this->show->id);
                 $this->isWishlisted = false;
 
                 return;
             }
 
-            auth()->user()->wishlists()->attach($this->show->id);
+            Auth::user()->wishlists()->attach($this->show->id);
             $this->isWishlisted = true;
 
             return;
