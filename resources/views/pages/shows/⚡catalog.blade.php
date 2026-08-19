@@ -27,14 +27,14 @@ new class extends Component {
         $sortTypes = match ($this->sort) {
             'popular' => 'popularity',
             'rating' => 'average_rating',
-            'recent' => 'first_air_date'
+            'recent' => 'first_air_date',
+            default => 'popularity'
         };
 
         return Show::query()
             ->when($this->genre, fn($q, $genreId) => $q->whereHas('genres', fn($q2) => $q2->where('id', $genreId)))
             ->when($this->search, fn($q, $search) => $q->where('name', 'ilike', "%{$search}%"))
-            ->whereNotNull($sortTypes)
-            ->orderBy($sortTypes, 'desc')
+            ->orderByRaw("{$sortTypes} DESC NULLS LAST")
             ->paginate(24);
     }
 
