@@ -13,6 +13,8 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/home', [ShowController::class, 'index'])->name('shows.index');
     Route::get('/shows/{show}', [ShowController::class, 'show'])->name('shows.show');
+
+    Route::livewire('/shows', 'pages::shows.catalog')->name('shows.catalog');
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';

@@ -3,6 +3,7 @@
 use Livewire\Component;
 use App\Models\Show;
 use App\Models\Review;
+use Illuminate\Support\Facades\Auth;
 
 new class extends Component
 {
@@ -14,17 +15,17 @@ new class extends Component
     {
         $this->show = $show;
     }
-    
+
     public function submit()
     {
-        if(auth()->check()) {
+        if(Auth::check()) {
             $this->validate([
                 'rating' => 'required|integer|min:0|max:5',
                 'content' => 'nullable|string'
             ]);
 
             Review::create([
-                'user_id' => auth()->user()->id,
+                'user_id' => Auth::id(),
                 'show_id' => $this->show->id,
                 'content' => $this->content,
                 'rating' => $this->rating

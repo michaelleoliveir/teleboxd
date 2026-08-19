@@ -2,6 +2,7 @@
 
 use Livewire\Component;
 use App\Models\Show;
+use Illuminate\Support\Facades\Auth;
 
 new class extends Component {
     public Show $show;
@@ -10,19 +11,20 @@ new class extends Component {
     public function mount(Show $show): void
     {
         $this->show = $show;
-        $this->isFavorited = auth()->user()?->favorites()->where('show_id', $show->id)->exists() ?? false;
+        $this->isFavorited = Auth::user()?->favorites()->where('show_id', $show->id)->exists() ?? false;
     }
 
     public function toggle()
     {
-        if (auth()->check()) {
+        if (Auth::check()) {
             if ($this->isFavorited) {
-                auth()->user()->favorites()->detach($this->show->id);
+                Auth::user()->favorites()->detach($this->show->id);
                 $this->isFavorited = false;
+                return;
             }
-            auth()->user()->favorites()->attach($this->show->id);
+            Auth::user()->favorites()->attach($this->show->id);
             $this->isFavorited = true;
-
+            return;
         }
 
         session()->flash('error', __('You must be logged in to favorite a show.'));

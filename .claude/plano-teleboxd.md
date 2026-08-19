@@ -171,3 +171,11 @@ Ainda em aberto:
       pro MVP; assíncrono evita que a criação de uma review fique lenta se
       o show tiver muitas reviews — mas adiciona uma camada de fila que
       talvez valha mais a pena guardar pra quando o volume de dados crescer.
+- [ ] Trocar a busca por nome do catálogo (`shows.catalog`, hoje um
+      `where('name', 'ilike', "%termo%")` simples) por busca full-text de
+      verdade — índice trigram (`pg_trgm`) no Postgres ou um motor externo
+      (Meilisearch/Elasticsearch). O `ilike` com wildcard no início não usa
+      índice B-tree comum (full table scan), o que é aceitável pro volume
+      atual de séries sincronizadas do TMDB, mas não escala indefinidamente.
+      Já era um item da seção 5 (fora de escopo do MVP); este bullet é o
+      apontamento técnico de *como* resolver quando chegar a hora.
