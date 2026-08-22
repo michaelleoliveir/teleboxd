@@ -36,12 +36,14 @@ class TmdbService
             ->json('genres', []);
     }
 
-    /** @return array<int, array<string, mixed>> */
-    public function getCredits(int $showId): array
+    /** @return array<string, mixed> */
+    public function getShowDetails(int $showId): array
     {
         return $this->request()
-            ->get("/tv/$showId/credits")
-            ->json('cast', []);
+            ->get("/tv/$showId", [
+                'append_to_response' => 'credits'
+            ])
+            ->json() ?? [];
     }
 
     protected function request(): PendingRequest

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Actor;
 use App\Models\Genre;
+use App\Models\Season;
 use App\Models\Show;
 use App\Services\TmdbService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,9 +26,7 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Execute the job.
@@ -82,6 +81,13 @@ class SyncShowsFromTmdbJob implements ShouldQueue
      */
     private function syncShows(array $show, array $genresMap, TmdbService $tmdb): void
     {
+        $details = $tmdb->getShowDetails($show['id']);
+        $episodeRuntime = null;
+
+        if (!empty($details['episode_run_time'])) {
+            $episodeRuntime = (int) collect($details['episode_run_time'])->avg();
+        }
+
         $model = Show::updateOrCreate(
             ['tmdb_id' => $show['id']],
             [
@@ -90,6 +96,9 @@ class SyncShowsFromTmdbJob implements ShouldQueue
                 'popularity' => $show['popularity'] ?? null,
                 'poster_path' => $show['poster_path'],
                 'first_air_date' => $show['first_air_date'] ?? null,
+                'number_of_seasons' => $details['number_of_seasons'] ?? null,
+                'number_of_episodes' => $details['number_of_episodes'] ?? null,
+                'episode_run_time' => $episodeRuntime,
                 'synced_at' => now(),
             ]
         );
@@ -101,7 +110,8 @@ class SyncShowsFromTmdbJob implements ShouldQueue
         }
 
         $model->genres()->sync($this->mapGenreIds($show['genre_ids'], $genresMap));
-        $this->syncActors($model, $tmdb->getCredits($show['id']));
+        $this->syncActors($model, $details['credits']['cast'] ?? []);
+        $this->syncSeasons($model, $details['seasons'] ?? []);
     }
 
     /**
@@ -130,6 +140,29 @@ class SyncShowsFromTmdbJob implements ShouldQueue
         };
 
         $show->actors()->sync($pivotData);
+    }
+
+    /**
+     * @param Show $show
+     * @param array<int|string, mixed> $seasons
+     */
+    private function syncSeasons(Show $show, array $seasons): void
+    {
+        foreach ($seasons as $season) {
+            if ($season['season_number'] !== 0) {
+                Season::updateOrCreate(
+                    [
+                        'show_id' => $show->id,
+                        'season_number' => $season['season_number']
+                    ],
+                    [
+                        'name' => $season['name'],
+                        'episode_count' => $season['episode_count'],
+                        'air_date' => $season['air_date']
+                    ]
+                );
+            }
+        }
     }
 
     /**
