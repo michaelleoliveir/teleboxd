@@ -2,6 +2,7 @@
 
 use App\Models\Season;
 use App\Models\Show;
+use App\Services\WatchStatsService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -40,7 +41,14 @@ new class extends Component
 
     public function episodesWatched(): int
     {
-        return Auth::user()?->watchedEpisodesCount($this->show) ?? 0;
+        $stats = app(WatchStatsService::class);
+        $user = Auth::user();
+
+        if (!$user) {
+            return 0;
+        }
+
+        return $stats->watchedEpisodesCount($user, $this->show);
     }
 
     public function updateProgress(): void
@@ -70,16 +78,14 @@ new class extends Component
 <div>
     <flux:modal.trigger name="watched-{{ $show->id }}">
         <div
-            @class([
-                'flex items-center gap-2 rounded-sm border px-4 py-2.5 text-sm font-semibold cursor-pointer',
-                'border-transparent bg-tlbx-blue/15 text-tlbx-blue' => $this->episodesWatched() > 0,
-                'border-tlbx-border text-zinc-700 dark:text-zinc-200' => $this->episodesWatched() === 0,
+            @class([ 'flex items-center gap-2 rounded-sm border px-4 py-2.5 text-sm font-semibold cursor-pointer' , 'border-transparent bg-tlbx-blue/15 text-tlbx-blue'=> $this->episodesWatched() > 0,
+            'border-tlbx-border text-zinc-700 dark:text-zinc-200' => $this->episodesWatched() === 0,
             ])
-        >
+            >
             <flux:icon.check :variant="$this->episodesWatched() > 0 ? 'solid' : 'outline'" class="size-4" />
             {{ __('Watched') }}
             @if ($show->number_of_episodes)
-                <span class="text-xs text-tlbx-muted">{{ $this->episodesWatched() }}/{{ $show->number_of_episodes }}</span>
+            <span class="text-xs text-tlbx-muted">{{ $this->episodesWatched() }}/{{ $show->number_of_episodes }}</span>
             @endif
         </div>
     </flux:modal.trigger>
@@ -92,9 +98,9 @@ new class extends Component
 
             <flux:select wire:model.live="selectedSeasonId" label="{{ __('Season') }}">
                 @foreach ($show->seasons as $season)
-                    <flux:select.option value="{{ $season->id }}">
-                        {{ $season->name ?? __('Season :number', ['number' => $season->season_number]) }}
-                    </flux:select.option>
+                <flux:select.option value="{{ $season->id }}">
+                    {{ $season->name ?? __('Season :number', ['number' => $season->season_number]) }}
+                </flux:select.option>
                 @endforeach
             </flux:select>
 
@@ -109,12 +115,11 @@ new class extends Component
                         wire:model="lastWatchedEpisode"
                         min="0"
                         max="{{ $this->selectedSeason()?->episode_count }}"
-                        class="w-20 rounded-sm border border-tlbx-border bg-transparent px-2 py-1 text-center text-sm text-zinc-900 dark:bg-zinc-900 dark:text-white"
-                    />
+                        class="w-20 rounded-sm border border-tlbx-border bg-transparent px-2 py-1 text-center text-sm text-zinc-900 dark:bg-zinc-900 dark:text-white" />
                     <span class="text-sm text-tlbx-muted">/ {{ $this->selectedSeason()?->episode_count }}</span>
                 </div>
                 @error('lastWatchedEpisode')
-                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
             </div>
 

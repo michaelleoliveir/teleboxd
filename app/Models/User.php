@@ -84,18 +84,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Season::class, 'watched_seasons')->withTimestamps()->withPivot('last_watched_episode');
     }
-
-    /**
-     * Total episodes watched, optionally scoped to a single show.
-     */
-    public function watchedEpisodesCount(?Show $show = null): int
-    {
-        $query = $this->watchedSeasons();
-
-        if ($show) {
-            $query->where('show_id', $show->id);
-        }
-
-        return (int) $query->sum('last_watched_episode');
-    }
 }
