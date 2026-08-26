@@ -25,6 +25,6 @@ class Season extends Model
     /** @return BelongsToMany<User, $this> */
     public function watchedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'watched_seasons')->withTimestamps();
+        return $this->belongsToMany(User::class, 'watched_seasons')->withTimestamps()->withPivot('last_watched_episode');
     }
 }

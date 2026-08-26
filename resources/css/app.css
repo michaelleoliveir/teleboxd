@@ -33,6 +33,7 @@
     --color-tlbx-muted: #55677a;
     --color-tlbx-primary: #00c030;
     --color-tlbx-orange: #ff8000;
+    --color-tlbx-blue: #0ea5e9;
 }
 
 @layer theme {

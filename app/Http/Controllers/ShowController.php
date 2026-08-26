@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Show;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 class ShowController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
         $shows = Show::query()
                 ->with('actors')
@@ -24,7 +23,7 @@ class ShowController extends Controller
 
     public function show(Show $show): View
     {
-        $show->load(['genres', 'actors', 'reviews.user']);
+        $show->load(['genres', 'actors', 'reviews.user', 'seasons']);
 
         return view('show', compact('show'));
     }

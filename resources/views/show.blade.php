@@ -43,6 +43,8 @@
                 <livewire:pages::shows.favorite-button :show="$show" />
 
                 <livewire:pages::shows.wishlist-button :show="$show" />
+
+                <livewire:pages::shows.watched-button :show="$show" />
             </div>
         </div>
     </div>
@@ -61,6 +63,30 @@
             <div class="mt-0.5 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ __('Cast members') }}</div>
         </div>
     </div>
+
+    @if ($show->seasons->isNotEmpty())
+        <section class="mb-12">
+            <div class="mb-4 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ __('Seasons') }}</div>
+
+            <div class="flex flex-col gap-3">
+                @foreach ($show->seasons as $season)
+                    <div class="flex flex-wrap items-center justify-between gap-3 rounded-md border border-tlbx-border px-4 py-3">
+                        <div>
+                            <div class="font-medium text-zinc-900 dark:text-white">
+                                {{ $season->name ?? __('Season :number', ['number' => $season->season_number]) }}
+                            </div>
+                            <div class="text-xs text-tlbx-muted">
+                                {{ trans_choice(':count episode|:count episodes', $season->episode_count, ['count' => $season->episode_count]) }}
+                                @if ($season->air_date)
+                                    · {{ $season->air_date->format('Y') }}
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
 
     @if ($show->actors->isNotEmpty())
         <section class="mb-12">

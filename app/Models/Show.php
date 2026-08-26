@@ -53,6 +53,6 @@ class Show extends Model
     /** @return HasMany<Season, $this> */
     public function seasons(): HasMany
     {
-        return $this->hasMany(Season::class);
+        return $this->hasMany(Season::class)->orderBy('season_number');
     }
 }
