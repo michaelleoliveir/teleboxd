@@ -31,6 +31,10 @@ class WatchStatsService
         return (int) $query->whereColumn('watched_seasons.last_watched_episode', '>=', 'seasons.episode_count')->count();
     }
 
+    /**
+     * @param Collection<int, int> $usersIds
+     * @return array<int, int>
+     */
     public function watchedSeasonsCountForUsers(Collection $usersIds, Show $show): array
     {
         return DB::table('watched_seasons')
@@ -68,5 +72,4 @@ class WatchStatsService
             ->select('shows.id')
             ->count();
     }
-
 }
