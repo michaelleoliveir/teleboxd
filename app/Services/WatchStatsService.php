@@ -44,4 +44,29 @@ class WatchStatsService
             ->all();
     }
 
+    public function hoursWatched(User $user): float
+    {
+        $totalMinutes = DB::table('watched_seasons')
+            ->join('seasons', 'seasons.id', '=', 'watched_seasons.season_id')
+            ->join('shows', 'shows.id', '=', 'seasons.show_id')
+            ->where('watched_seasons.user_id', $user->id)
+            ->selectRaw('SUM(watched_seasons.last_watched_episode * shows.episode_run_time) as total_minutes')
+            ->value('total_minutes');
+
+        return (float) $totalMinutes / 60;
+    }
+
+    public function showsCompletedCount(User $user): int
+    {
+        return DB::table('watched_seasons')
+            ->join('seasons', 'seasons.id', '=', 'watched_seasons.season_id')
+            ->join('shows', 'shows.id', '=', 'seasons.show_id')
+            ->where('watched_seasons.user_id', $user->id)
+            ->whereColumn('watched_seasons.last_watched_episode', '>=', 'seasons.episode_count')
+            ->groupBy('shows.id', 'shows.number_of_seasons')
+            ->havingRaw('COUNT(*) = shows.number_of_seasons')
+            ->select('shows.id')
+            ->count();
+    }
+
 }

@@ -7,19 +7,17 @@
             </h1>
         </div>
 
-        {{-- Placeholder: watch stats depend on the review/watch-tracking feature (Fase 4), not built yet.
-            Kept as illustrative mock numbers until that data is real. --}}
         <div class="flex gap-8 text-right">
             <div>
-                <div class="font-serif text-3xl text-zinc-900 dark:text-white">312</div>
+                <div class="font-serif text-3xl text-zinc-900 dark:text-white">{{ $episodesWatched }}</div>
                 <div class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase">{{ __('Episodes') }}</div>
             </div>
             <div>
-                <div class="font-serif text-3xl text-zinc-900 dark:text-white">118h</div>
+                <div class="font-serif text-3xl text-zinc-900 dark:text-white">{{ number_format($hoursWatched, 0) }}h</div>
                 <div class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase">{{ __('Hours') }}</div>
             </div>
             <div>
-                <div class="font-serif text-3xl text-zinc-900 dark:text-white">27</div>
+                <div class="font-serif text-3xl text-zinc-900 dark:text-white">{{ $showsCompleted }}</div>
                 <div class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase">{{ __('Completed') }}</div>
             </div>
         </div>
