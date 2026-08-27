@@ -86,6 +86,8 @@ class SyncShowsFromTmdbJob implements ShouldQueue
 
         if (!empty($details['episode_run_time'])) {
             $episodeRuntime = (int) collect($details['episode_run_time'])->avg();
+        } elseif (!empty($details['last_episode_to_air']['runtime'])) {
+            $episodeRuntime = (int) $details['last_episode_to_air']['runtime'];
         }
 
         $model = Show::updateOrCreate(
