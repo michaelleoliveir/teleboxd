@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Genre;
 use App\Models\Show;
 
-new #[Title('All shows')] class extends Component {
+new #[Title('Catalog |')] class extends Component {
     use WithPagination;
 
     public ?string $search = null;
