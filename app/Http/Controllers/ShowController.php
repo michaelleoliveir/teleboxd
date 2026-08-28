@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Show;
+use App\Services\WatchStatsService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShowController extends Controller
 {
-    public function index(Request $request): View
+    public function index(WatchStatsService $service): View
     {
+        $user = Auth::user();
+
         $shows = Show::query()
                 ->with('actors')
                 ->whereNotNull(['poster_path', 'popularity', 'first_air_date'])
@@ -19,12 +22,16 @@ class ShowController extends Controller
 
         $actors = $shows->pluck('actors')->flatten()->unique('id')->whereNotNull('profile_path')->take(9);
 
-        return view('main', compact('shows', 'actors'));
+        $episodesWatched = $service->watchedEpisodesCount($user);
+        $hoursWatched = $service->hoursWatched($user);
+        $showsCompleted = $service->showsCompletedCount($user);
+
+        return view('main', compact('shows', 'actors', 'episodesWatched', 'hoursWatched', 'showsCompleted'));
     }
 
     public function show(Show $show): View
     {
-        $show->load(['genres', 'actors', 'reviews.user']);
+        $show->load(['genres', 'actors', 'reviews.user', 'seasons']);
 
         return view('show', compact('show'));
     }

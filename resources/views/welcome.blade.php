@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
-        @include('partials.head', ['title' => __('Track TV series you\'ve watched')])
+        @include('partials.head', ['title' => __('')])
     </head>
     <body class="bg-tlbx-bg antialiased">
         <header class="sticky top-0 z-20 border-b border-tlbx-border/60 bg-tlbx-bg/80 backdrop-blur">

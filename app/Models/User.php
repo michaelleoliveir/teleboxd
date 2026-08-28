@@ -78,4 +78,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+
+    /** @return BelongsToMany<Season, $this> */
+    public function watchedSeasons(): BelongsToMany
+    {
+        return $this->belongsToMany(Season::class, 'watched_seasons')->withTimestamps()->withPivot('last_watched_episode');
+    }
 }
