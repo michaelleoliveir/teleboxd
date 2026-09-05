@@ -70,6 +70,12 @@ new class extends Component
             $this->selectedSeasonId => ['last_watched_episode' => $this->lastWatchedEpisode],
         ]);
 
+        if ($this->lastWatchedEpisode > 0) {
+            Auth::user()->wishlists()->detach($this->show->id);
+        }
+
+        $this->dispatch('watch-progress-updated', showId: $this->show->id);
+
         $this->modal('watched-' . $this->show->id)->close();
     }
 };
