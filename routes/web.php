@@ -15,7 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/shows/{show}', [ShowController::class, 'show'])->name('shows.show');
 
     Route::livewire('/shows', 'pages::shows.catalog')->name('shows.catalog');
-    Route::livewire('/{user}', 'pages::users.profile')->name('users.profile');
+    Route::livewire('/u/{user}', 'pages::users.profile')->name('users.profile');
 });
 
 require __DIR__ . '/settings.php';
