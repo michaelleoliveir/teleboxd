@@ -124,26 +124,32 @@ new #[Title('Profile |')] class extends Component
 
 <div>
     <div class="mb-9 flex flex-wrap items-end justify-between gap-6">
-        <div class="flex min-w-0 items-start gap-4">
+        <div class="flex min-w-0 items-center gap-4">
             @if ($user->avatar_path)
                 <img src="{{ Storage::url($user->avatar_path) }}" alt="{{ $user->name }}"
-                    class="size-16 rounded-full object-cover sm:size-20">
+                    class="size-16 shrink-0 rounded-full object-cover sm:size-20">
             @else
-                <flux:avatar :name="$user->name" :initials="$user->initials()" class="size-16 sm:size-20" />
+                <flux:avatar :name="$user->name" :initials="$user->initials()" class="size-16 shrink-0 sm:size-20" />
             @endif
 
-            <div class="min-w-0 pt-0.5">
-                <h1 class="font-serif text-3xl text-zinc-900 italic sm:text-4xl dark:text-white">{{ $user->name }}</h1>
+            <div class="min-w-0">
+                <div class="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                    <h1 class="font-serif text-3xl text-zinc-900 italic sm:text-4xl dark:text-white">{{ $user->name }}</h1>
+
+                    @if ($this->isOwner)
+                        <span class="text-tlbx-muted" aria-hidden="true">·</span>
+                        <a href="{{ route('profile.edit') }}" wire:navigate
+                            class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase underline-offset-4 hover:text-tlbx-primary hover:underline">
+                            {{ __('Edit profile') }}
+                        </a>
+                    @endif
+                </div>
 
                 @if ($user->bio)
-                    <p class="mt-2 max-w-xl text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{{ $user->bio }}</p>
-                @endif
-
-                @if ($this->isOwner)
-                    <a href="{{ route('profile.edit') }}" wire:navigate
-                        class="mt-3 inline-block text-[10px] tracking-[0.15em] text-tlbx-muted uppercase underline-offset-4 hover:text-tlbx-primary hover:underline">
-                        {{ __('Edit profile') }}
-                    </a>
+                    <p class="mt-1.5 flex max-w-lg items-center gap-2.5">
+                        <span class="w-px shrink-0 self-stretch bg-tlbx-border"></span>
+                        <span class="font-serif text-sm leading-snug text-tlbx-muted italic whitespace-pre-line">{{ trim($user->bio) }}</span>
+                    </p>
                 @endif
             </div>
         </div>

@@ -1,4 +1,4 @@
-<x-layouts::app :title="$show->name">
+<x-layouts::app :title="$show->name . ' | '">
     <div class="flex flex-col gap-9 sm:flex-row">
         <div class="w-44 shrink-0 sm:w-56">
             <div class="aspect-2/3 overflow-hidden rounded-md border border-tlbx-border bg-tlbx-card shadow-sm">
@@ -65,12 +65,15 @@
     </div>
 
     @if ($show->seasons->isNotEmpty())
-        <section class="mb-12">
+        <section class="mb-12" x-data="{ expanded: false }">
             <div class="mb-4 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ __('Seasons') }}</div>
 
             <div class="flex flex-col gap-3">
-                @foreach ($show->seasons as $season)
-                    <div class="flex flex-wrap items-center justify-between gap-3 rounded-md border border-tlbx-border px-4 py-3">
+                @foreach ($show->seasons as $index => $season)
+                    <div
+                        @if ($index >= 6) x-show="expanded" style="display: none;" @endif
+                        class="flex flex-wrap items-center justify-between gap-3 rounded-md border border-tlbx-border px-4 py-3"
+                    >
                         <div>
                             <div class="font-medium text-zinc-900 dark:text-white">
                                 {{ $season->name ?? __('Season :number', ['number' => $season->season_number]) }}
@@ -85,6 +88,17 @@
                     </div>
                 @endforeach
             </div>
+
+            @if ($show->seasons->count() > 6)
+                <button
+                    type="button"
+                    class="mt-4 text-[10px] tracking-[0.15em] text-tlbx-muted uppercase underline-offset-4 hover:text-tlbx-primary hover:underline"
+                    x-on:click="expanded = !expanded"
+                >
+                    <span x-show="!expanded">{{ __('Show all :count seasons', ['count' => $show->seasons->count()]) }}</span>
+                    <span x-show="expanded" style="display: none;">{{ __('Show less') }}</span>
+                    </button>
+            @endif
         </section>
     @endif
 
