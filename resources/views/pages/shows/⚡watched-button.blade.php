@@ -4,6 +4,7 @@ use App\Models\Season;
 use App\Models\Show;
 use App\Services\WatchStatsService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 new class extends Component
@@ -59,11 +60,24 @@ new class extends Component
             return;
         }
 
+        $this->validate([
+            'selectedSeasonId' => [
+                'required',
+                'integer',
+                Rule::exists('seasons', 'id')->where('show_id', $this->show->id)
+            ],
+            'lastWatchedEpisode' => "required|integer|min:0",
+        ]);
+
         $season = $this->selectedSeason();
 
+        if(!$season) {
+            session()->flash('error', __('Season not found.'));
+            return;
+        }
+
         $this->validate([
-            'selectedSeasonId' => 'required|exists:seasons,id',
-            'lastWatchedEpisode' => "required|integer|min:0|max:{$season->episode_count}",
+            'lastWatchedEpisode' => "integer|max:{$season->episode_count}",
         ]);
 
         Auth::user()->watchedSeasons()->syncWithoutDetaching([

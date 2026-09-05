@@ -43,6 +43,9 @@ new #[Title('Profile settings')] class extends Component {
         $user->fill($validated);
 
         if ($this->avatar) {
+            if($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
             $user->avatar_path = $this->avatar->store('avatars', 'public');
         }
 
@@ -112,25 +115,24 @@ new #[Title('Profile settings')] class extends Component {
             <div>
                 <div class="mb-3">
                     @if (Auth::user()->avatar_path)
-                        <div class="relative size-24">
-                            <img src="{{ Storage::url(Auth::user()->avatar_path) }}" alt="{{ Auth::user()->name }}"
-                                class="size-24 rounded-full border border-tlbx-border object-cover">
-                            <button
-                                type="button"
-                                wire:click="removeAvatar"
-                                wire:confirm="{{ __('Remove this photo?') }}"
-                                class="absolute -right-1 -bottom-1 flex size-8 cursor-pointer items-center justify-center rounded-full border border-tlbx-border bg-tlbx-card text-tlbx-muted shadow-sm hover:border-red-400 hover:text-red-400"
-                                title="{{ __('Remove photo') }}"
-                                aria-label="{{ __('Remove photo') }}"
-                            >
-                                <flux:icon.trash class="size-3.5" />
-                            </button>
-                        </div>
+                    <div class="relative size-24">
+                        <img src="{{ Storage::url(Auth::user()->avatar_path) }}" alt="{{ Auth::user()->name }}"
+                            class="size-24 rounded-full border border-tlbx-border object-cover">
+                        <button
+                            type="button"
+                            wire:click="removeAvatar"
+                            wire:confirm="{{ __('Remove this photo?') }}"
+                            class="absolute -right-1 -bottom-1 flex size-8 cursor-pointer items-center justify-center rounded-full border border-tlbx-border bg-tlbx-card text-tlbx-muted shadow-sm hover:border-red-400 hover:text-red-400"
+                            title="{{ __('Remove photo') }}"
+                            aria-label="{{ __('Remove photo') }}">
+                            <flux:icon.trash class="size-3.5" />
+                        </button>
+                    </div>
                     @else
-                        <flux:avatar
-                            :name="Auth::user()->name"
-                            :initials="Auth::user()->initials()"
-                            class="size-24" />
+                    <flux:avatar
+                        :name="Auth::user()->name"
+                        :initials="Auth::user()->initials()"
+                        class="size-24" />
                     @endif
                 </div>
 

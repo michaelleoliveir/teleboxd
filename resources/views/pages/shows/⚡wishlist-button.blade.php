@@ -5,6 +5,7 @@ use App\Models\Show;
 use App\Services\WatchStatsService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
+use Flux\Flux;
 
 new class extends Component {
     public Show $show;
@@ -19,7 +20,7 @@ new class extends Component {
     public function toggle()
     {
         if (!Auth::check()) {
-            session()->flash('error', __('You must be logged in to wishlist a show.'));
+            Flux::toast(variant: 'danger', text: __('You must be logged in to wishlist a show.'));
             return;
         }
 
@@ -31,7 +32,7 @@ new class extends Component {
         }
 
         if (app(WatchStatsService::class)->watchedEpisodesCount(Auth::user(), $this->show) > 0) {
-            session()->flash('error', __('You can’t add a show you’re already watching to your watchlist.'));
+            Flux::toast(variant: 'danger', text: __('You can’t add a show you’re already watching to your watchlist.'));
             return;
         }
 
