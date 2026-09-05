@@ -57,6 +57,9 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
+                        <flux:menu.item :href="route('users.profile', \Illuminate\Support\Facades\Auth::user())" icon="user" wire:navigate>
+                            {{ __('Profile') }}
+                        </flux:menu.item>
                         <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                             {{ __('Settings') }}
                         </flux:menu.item>
