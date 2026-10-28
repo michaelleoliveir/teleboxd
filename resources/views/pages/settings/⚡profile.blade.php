@@ -12,7 +12,7 @@ use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
-new #[Title('Profile settings')] class extends Component {
+new #[Title('Profile Settings | ')] class extends Component {
     use ProfileValidationRules;
     use WithFileUploads;
 
@@ -116,7 +116,7 @@ new #[Title('Profile settings')] class extends Component {
                 <div class="mb-3">
                     @if (Auth::user()->avatar_path)
                     <div class="relative size-24">
-                        <img src="{{ Storage::url(Auth::user()->avatar_path) }}" alt="{{ Auth::user()->name }}"
+                        <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}"
                             class="size-24 rounded-full border border-tlbx-border object-cover">
                         <button
                             type="button"

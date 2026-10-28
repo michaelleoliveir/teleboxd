@@ -2,13 +2,13 @@
 
 use App\Models\User;
 use App\Services\WatchStatsService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Profile |')] class extends Component
+new class extends Component
 {
     public User $user;
 
@@ -119,6 +119,11 @@ new #[Title('Profile |')] class extends Component
             'shows_completed' => $service->showsCompletedCount($this->user),
         ];
     }
+
+    public function render(): View
+    {
+        return $this->view()->title($this->user->name . ' |');
+    }
 };
 ?>
 
@@ -126,7 +131,7 @@ new #[Title('Profile |')] class extends Component
     <div class="mb-9 flex flex-wrap items-end justify-between gap-6">
         <div class="flex min-w-0 items-center gap-4">
             @if ($user->avatar_path)
-                <img src="{{ Storage::url($user->avatar_path) }}" alt="{{ $user->name }}"
+                <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
                     class="size-16 shrink-0 rounded-full object-cover sm:size-20">
             @else
                 <flux:avatar :name="$user->name" :initials="$user->initials()" class="size-16 shrink-0 sm:size-20" />

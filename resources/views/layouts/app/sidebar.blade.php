@@ -34,6 +34,7 @@
             <flux:dropdown position="top" align="end">
                 <flux:profile
                     :initials="\Illuminate\Support\Facades\Auth::user()->initials()"
+                    :avatar="Auth::user()->avatar_url"
                     icon-trailing="chevron-down"
                 />
 
@@ -44,6 +45,7 @@
                                 <flux:avatar
                                     :name="\Illuminate\Support\Facades\Auth::user()->name"
                                     :initials="\Illuminate\Support\Facades\Auth::user()->initials()"
+                                    :src="Auth::user()->avatar_url"
                                 />
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
