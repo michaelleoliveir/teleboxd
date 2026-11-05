@@ -2,6 +2,7 @@
     <flux:sidebar.profile
         :name="\Illuminate\Support\Facades\Auth::user()->name"
         :initials="\Illuminate\Support\Facades\Auth::user()->initials()"
+        :avatar="Auth::user()->avatar_url"
         icon:trailing="chevrons-up-down"
         data-test="sidebar-menu-button"
     />
@@ -11,6 +12,7 @@
             <flux:avatar
                 :name="\Illuminate\Support\Facades\Auth::user()->name"
                 :initials="\Illuminate\Support\Facades\Auth::user()->initials()"
+                :src="Auth::user()->avatar_url"
             />
             <div class="grid flex-1 text-start text-sm leading-tight">
                 <flux:heading class="truncate">{{ \Illuminate\Support\Facades\Auth::user()->name }}</flux:heading>
@@ -19,6 +21,9 @@
         </div>
         <flux:menu.separator />
         <flux:menu.radio.group>
+            <flux:menu.item :href="route('users.profile', \Illuminate\Support\Facades\Auth::user())" icon="user" wire:navigate>
+                {{ __('Profile') }}
+            </flux:menu.item>
             <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                 {{ __('Settings') }}
             </flux:menu.item>

@@ -5,8 +5,7 @@ use Livewire\Attributes\On;
 use App\Models\Show;
 use App\Services\WatchStatsService;
 
-new class extends Component
-{
+new class extends Component {
     public Show $show;
     public array $seasonsWatchedMap = [];
 
@@ -37,38 +36,51 @@ new class extends Component
     <div class="mb-4 text-xs tracking-[0.2em] text-tlbx-muted uppercase">{{ __('Reviews') }}</div>
 
     @if ($show->reviews->isEmpty())
-    <p class="font-serif text-sm text-tlbx-muted italic">{{ __('No reviews yet. Be the first to review this show.') }}</p>
+        <p class="font-serif text-sm text-tlbx-muted italic">{{ __('No reviews yet. Be the first to review this show.') }}
+        </p>
     @else
-    <div class="divide-y divide-tlbx-border">
-        @foreach ($show->reviews as $review)
-        @php $seasonsWatched = $review->user ? ($seasonsWatchedMap[$review->user->id] ?? 0) : null; @endphp
-        <div class="flex gap-3 py-5 first:pt-0">
-            <flux:avatar
-                :name="$review->user?->name ?? __('Deleted user')"
-                :initials="$review->user?->initials() ?? '?'"
-                size="sm" />
-            <div class="flex-1">
-                <div class="flex flex-wrap items-baseline gap-2">
-                    <span class="text-sm font-semibold text-zinc-900 dark:text-white">
-                        {{ $review->user?->name ?? __('Deleted user') }}
-                    </span>
-                    <x-star-rating :rating="$review->rating" />
-                    @if ($seasonsWatched !== null && $show->number_of_seasons)
-                        <span class="text-xs text-tlbx-muted">
-                            {{ __(':watched/:total seasons watched', ['watched' => $seasonsWatched, 'total' => $show->number_of_seasons]) }}
-                        </span>
+        <div class="divide-y divide-tlbx-border">
+            @foreach ($show->reviews as $review)
+                @php $seasonsWatched = $review->user ? ($seasonsWatchedMap[$review->user->id] ?? 0) : null; @endphp
+                <div class="flex gap-3 py-5 first:pt-0">
+                    @if ($review->user)
+                        <a href="{{ route('users.profile', $review->user) }}" wire:navigate>
+                            <flux:avatar :name="$review->user->name" :initials="$review->user->initials()"
+                                :src="$review->user->avatar_url" size="sm" />
+                        </a>
+                    @else
+                        <flux:avatar :name="__('Deleted user')" initials="?" size="sm" />
                     @endif
-                    <span class="ml-auto text-xs text-tlbx-muted">{{ $review->created_at->diffForHumans() }}</span>
-                </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-baseline gap-2">
+                            @if ($review->user)
+                                <a href="{{ route('users.profile', $review->user) }}" wire:navigate>
+                                    <span class="text-sm font-semibold text-zinc-900 dark:text-white">
+                                        {{ $review->user->name }}
+                                    </span>
+                                </a>
+                            @else
+                                <span class="text-sm font-semibold text-zinc-900 dark:text-white">
+                                    {{ __('Deleted user') }}
+                                </span>
+                            @endif
+                            <x-star-rating :rating="$review->rating" />
+                            @if ($seasonsWatched !== null && $show->number_of_seasons)
+                                <span class="text-xs text-tlbx-muted">
+                                    {{ __(':watched/:total seasons watched', ['watched' => $seasonsWatched, 'total' => $show->number_of_seasons]) }}
+                                </span>
+                            @endif
+                            <span class="ml-auto text-xs text-tlbx-muted">{{ $review->created_at->diffForHumans() }}</span>
+                        </div>
 
-                @if ($review->content)
-                <p class="mt-2 font-serif text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-                    {{ $review->content }}
-                </p>
-                @endif
-            </div>
+                        @if ($review->content)
+                            <p class="mt-2 font-serif text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                                {{ $review->content }}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
         </div>
-        @endforeach
-    </div>
     @endif
 </section>

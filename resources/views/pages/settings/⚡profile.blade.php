@@ -12,7 +12,7 @@ use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
-new #[Title('Profile settings')] class extends Component {
+new #[Title('Profile Settings | ')] class extends Component {
     use ProfileValidationRules;
     use WithFileUploads;
 
@@ -43,6 +43,9 @@ new #[Title('Profile settings')] class extends Component {
         $user->fill($validated);
 
         if ($this->avatar) {
+            if($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
             $user->avatar_path = $this->avatar->store('avatars', 'public');
         }
 
@@ -51,6 +54,7 @@ new #[Title('Profile settings')] class extends Component {
         }
 
         $user->save();
+        $this->avatar = null;
 
         Flux::toast(variant: 'success', text: __('Profile updated.'));
     }
@@ -71,6 +75,21 @@ new #[Title('Profile settings')] class extends Component {
         $user->sendEmailVerificationNotification();
 
         Session::flash('status', 'verification-link-sent');
+    }
+
+    public function removeAvatar(): void
+    {
+        $user = Auth::user();
+
+        if ($user->avatar_path) {
+            Storage::disk('public')->delete($user->avatar_path);
+            $user->avatar_path = null;
+            $user->save();
+        }
+
+        $this->avatar = null;
+
+        Flux::toast(variant: 'success', text: __('Avatar removed.'));
     }
 
     #[Computed]
@@ -95,34 +114,66 @@ new #[Title('Profile settings')] class extends Component {
     <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <div>
-                @if (Auth::user()->avatar_path)
-                    <img src="{{ Storage::url(Auth::user()->avatar_path) }}" alt="Avatar"
-                        class="w-12.5 h-12.5 rounded-full mb-2">
-                @endif
+                <div class="mb-3">
+                    @if ($avatar && $avatar->isPreviewable())
+                    <div class="relative size-24">
+                        <img src="{{ $avatar->temporaryUrl() }}" alt="{{ Auth::user()->name }}"
+                                class="size-24 rounded-full border border-tlbx-border object-cover">
+                            <button
+                                type="button"
+                                wire:click="$set('avatar', null)"
+                                class="absolute -right-1 -bottom-1 flex size-8 cursor-pointer items-center justify-center rounded-full border border-tlbx-border bg-tlbx-card text-tlbx-muted shadow-sm hover:border-red-400 hover:text-red-400"
+                                title="{{ __('Discard selected photo') }}"
+                                aria-label="{{ __('Discard selected photo') }}">
+                                <flux:icon.x-mark class="size-3.5" />
+                            </button>
+                    </div>
+                    @elseif (Auth::user()->avatar_path)
+                    <div class="relative size-24">
+                        <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}"
+                            class="size-24 rounded-full border border-tlbx-border object-cover">
+                        <button
+                            type="button"
+                            wire:click="removeAvatar"
+                            wire:confirm="{{ __('Remove this photo?') }}"
+                            class="absolute -right-1 -bottom-1 flex size-8 cursor-pointer items-center justify-center rounded-full border border-tlbx-border bg-tlbx-card text-tlbx-muted shadow-sm hover:border-red-400 hover:text-red-400"
+                            title="{{ __('Remove photo') }}"
+                            aria-label="{{ __('Remove photo') }}">
+                            <flux:icon.trash class="size-3.5" />
+                        </button>
+                    </div>
+                    @else
+                    <flux:avatar
+                        :name="Auth::user()->name"
+                        :initials="Auth::user()->initials()"
+                        class="size-24" />
+                    @endif
+                </div>
+
                 <flux:input wire:model="avatar" type="file" accept="image/*" :label="__('Avatar')" />
             </div>
-            
+
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
             <div>
                 <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
 
                 @if ($this->hasUnverifiedEmail)
-                    <div>
-                        <flux:text class="mt-4">
-                            {{ __('Your email address is unverified.') }}
+                <div>
+                    <flux:text class="mt-4">
+                        {{ __('Your email address is unverified.') }}
 
-                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
-                                {{ __('Click here to re-send the verification email.') }}
-                            </flux:link>
-                        </flux:text>
+                        <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
+                            {{ __('Click here to re-send the verification email.') }}
+                        </flux:link>
+                    </flux:text>
 
-                        @if (session('status') === 'verification-link-sent')
-                            <flux:text class="mt-2 font-medium !dark:text-green-400 text-green-600!">
-                                {{ __('A new verification link has been sent to your email address.') }}
-                            </flux:text>
-                        @endif
-                    </div>
+                    @if (session('status') === 'verification-link-sent')
+                    <flux:text class="mt-2 font-medium !dark:text-green-400 text-green-600!">
+                        {{ __('A new verification link has been sent to your email address.') }}
+                    </flux:text>
+                    @endif
+                </div>
                 @endif
             </div>
 
@@ -139,7 +190,7 @@ new #[Title('Profile settings')] class extends Component {
         </form>
 
         @if ($this->showDeleteUser)
-            <livewire:pages::settings.delete-user-form />
+        <livewire:pages::settings.delete-user-form />
         @endif
     </x-pages::settings.layout>
 </section>

@@ -6,11 +6,13 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -28,8 +30,10 @@ use Illuminate\Support\Str;
  * @property Carbon|null $updated_at
  * @property string|null $bio
  * @property string|null $avatar_path
+ * @property string $slug
+ * @property-read string|null $avatar_url
  */
-#[Fillable(['name', 'email', 'password', 'bio', 'avatar_path'])]
+#[Fillable(['name', 'email', 'password', 'bio', 'avatar_path', 'slug'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -50,6 +54,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (User $user): void {
+            if ($user->isDirty('name') || blank($user->slug)) {
+                $user->slug = $user->uniqueSlugFromName();
+            }
+        });
+
+        static::deleted(function (User $user): void {
+            if ($user->avatar_path !== null) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+        });
+    }
+
+    /**
      * Get the user's initials
      */
     public function initials(): string
@@ -57,8 +79,19 @@ class User extends Authenticatable
         $initials = Str::initials($this->name, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
             : $initials;
+    }
+
+    /**
+     * Get the user's profile picture
+     * @return Attribute<string|null, never>
+     */
+    protected function avatarUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->avatar_path ? Storage::url($this->avatar_path) : null
+        );
     }
 
     /** @return BelongsToMany<Show, $this> */
@@ -83,5 +116,36 @@ class User extends Authenticatable
     public function watchedSeasons(): BelongsToMany
     {
         return $this->belongsToMany(Season::class, 'watched_seasons')->withTimestamps()->withPivot('last_watched_episode');
+    }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Get a unique slug from the user's name.
+     *
+     * @return string
+     */
+    public function uniqueSlugFromName(): string
+    {
+        $base = Str::slug($this->name) ?: 'user';
+        $slug = $base;
+        $i = 1;
+        while (static::query()
+            ->where('slug', $slug)
+            ->when($this->exists, fn($q) => $q->where('id', '!=', $this->id))
+            ->exists()
+        ) {
+            $slug = "{$base}-{$i}";
+            $i++;
+        }
+        return $slug;
     }
 }
