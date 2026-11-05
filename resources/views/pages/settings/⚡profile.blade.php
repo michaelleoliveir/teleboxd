@@ -54,6 +54,7 @@ new #[Title('Profile Settings | ')] class extends Component {
         }
 
         $user->save();
+        $this->avatar = null;
 
         Flux::toast(variant: 'success', text: __('Profile updated.'));
     }
@@ -114,7 +115,20 @@ new #[Title('Profile Settings | ')] class extends Component {
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <div>
                 <div class="mb-3">
-                    @if (Auth::user()->avatar_path)
+                    @if ($avatar && $avatar->isPreviewable())
+                    <div class="relative size-24">
+                        <img src="{{ $avatar->temporaryUrl() }}" alt="{{ Auth::user()->name }}"
+                                class="size-24 rounded-full border border-tlbx-border object-cover">
+                            <button
+                                type="button"
+                                wire:click="$set('avatar', null)"
+                                class="absolute -right-1 -bottom-1 flex size-8 cursor-pointer items-center justify-center rounded-full border border-tlbx-border bg-tlbx-card text-tlbx-muted shadow-sm hover:border-red-400 hover:text-red-400"
+                                title="{{ __('Discard selected photo') }}"
+                                aria-label="{{ __('Discard selected photo') }}">
+                                <flux:icon.x-mark class="size-3.5" />
+                            </button>
+                    </div>
+                    @elseif (Auth::user()->avatar_path)
                     <div class="relative size-24">
                         <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}"
                             class="size-24 rounded-full border border-tlbx-border object-cover">

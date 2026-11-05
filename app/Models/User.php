@@ -31,6 +31,7 @@ use Illuminate\Support\Str;
  * @property string|null $bio
  * @property string|null $avatar_path
  * @property string $slug
+ * @property-read string|null $avatar_url
  */
 #[Fillable(['name', 'email', 'password', 'bio', 'avatar_path', 'slug'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -84,7 +85,6 @@ class User extends Authenticatable
 
     /**
      * Get the user's profile picture
-     * @property-read string|null $avatar_url
      * @return Attribute
      */
     protected function avatarUrl(): Attribute
