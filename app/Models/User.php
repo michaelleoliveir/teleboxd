@@ -85,7 +85,7 @@ class User extends Authenticatable
 
     /**
      * Get the user's profile picture
-     * @return Attribute
+     * @return Attribute<string|null, never>
      */
     protected function avatarUrl(): Attribute
     {
