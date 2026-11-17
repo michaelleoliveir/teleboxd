@@ -20,7 +20,9 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     use Queueable;
 
     private const TOTAL_PAGES = 10;
+
     private int $created = 0;
+
     private int $updated = 0;
 
     /**
@@ -39,7 +41,7 @@ class SyncShowsFromTmdbJob implements ShouldQueue
             try {
                 $this->syncPage($tmdb->getShows($page), $genresMap, $tmdb);
             } catch (\Throwable $th) {
-                Log::error("Error syncing shows on page {$page}: " . $th->getMessage());
+                Log::error("Error syncing shows on page {$page}: ".$th->getMessage());
             }
         }
 
@@ -47,7 +49,7 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     }
 
     /**
-     * @param array<int, array<string, mixed>> $genres
+     * @param  array<int, array<string, mixed>>  $genres
      * @return array<int, int>
      */
     private function syncGenres(array $genres): array
@@ -63,9 +65,8 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     }
 
     /**
-     * @param array<int, array<string, mixed>> $shows
-     * @param array<int, int> $genresMap
-     * @param TmdbService $tmdb
+     * @param  array<int, array<string, mixed>>  $shows
+     * @param  array<int, int>  $genresMap
      */
     private function syncPage(array $shows, array $genresMap, TmdbService $tmdb): void
     {
@@ -75,18 +76,17 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     }
 
     /**
-     * @param array<int|string, mixed> $show
-     * @param array<int, int> $genresMap
-     * @param TmdbService $tmdb
+     * @param  array<int|string, mixed>  $show
+     * @param  array<int, int>  $genresMap
      */
     private function syncShows(array $show, array $genresMap, TmdbService $tmdb): void
     {
         $details = $tmdb->getShowDetails($show['id']);
         $episodeRuntime = null;
 
-        if (!empty($details['episode_run_time'])) {
+        if (! empty($details['episode_run_time'])) {
             $episodeRuntime = (int) collect((array) $details['episode_run_time'])->avg();
-        } elseif (!empty($details['last_episode_to_air']['runtime'])) {
+        } elseif (! empty($details['last_episode_to_air']['runtime'])) {
             $episodeRuntime = (int) $details['last_episode_to_air']['runtime'];
         }
 
@@ -117,8 +117,7 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     }
 
     /**
-     * @param Show $show
-     * @param array<int|string, mixed> $cast
+     * @param  array<int|string, mixed>  $cast
      */
     private function syncActors(Show $show, array $cast): void
     {
@@ -129,24 +128,23 @@ class SyncShowsFromTmdbJob implements ShouldQueue
 
         foreach ($cast as $actor) {
             $model = Actor::updateOrCreate([
-                'tmdb_id' => $actor['id']
+                'tmdb_id' => $actor['id'],
             ], [
                 'name' => $actor['name'],
-                'profile_path' => $actor['profile_path']
+                'profile_path' => $actor['profile_path'],
             ]);
 
             $pivotData[$model->id] = [
                 'character' => $actor['character'],
-                'popularity_order' => $actor['order']
+                'popularity_order' => $actor['order'],
             ];
-        };
+        }
 
         $show->actors()->sync($pivotData);
     }
 
     /**
-     * @param Show $show
-     * @param array<int|string, mixed> $seasons
+     * @param  array<int|string, mixed>  $seasons
      */
     private function syncSeasons(Show $show, array $seasons): void
     {
@@ -155,12 +153,12 @@ class SyncShowsFromTmdbJob implements ShouldQueue
                 Season::updateOrCreate(
                     [
                         'show_id' => $show->id,
-                        'season_number' => $season['season_number']
+                        'season_number' => $season['season_number'],
                     ],
                     [
                         'name' => $season['name'],
                         'episode_count' => $season['episode_count'],
-                        'air_date' => $season['air_date']
+                        'air_date' => $season['air_date'],
                     ]
                 );
             }
@@ -168,14 +166,14 @@ class SyncShowsFromTmdbJob implements ShouldQueue
     }
 
     /**
-     * @param array<int, int> $tmdbGenreIds
-     * @param array<int, int> $genresMap
+     * @param  array<int, int>  $tmdbGenreIds
+     * @param  array<int, int>  $genresMap
      * @return array<int, int>
      */
     private function mapGenreIds(array $tmdbGenreIds, array $genresMap): array
     {
         return collect($tmdbGenreIds)
-            ->map(fn($tmdbId) => $genresMap[$tmdbId] ?? null)
+            ->map(fn ($tmdbId) => $genresMap[$tmdbId] ?? null)
             ->filter()
             ->values()
             ->toArray();

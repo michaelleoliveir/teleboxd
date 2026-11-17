@@ -19,7 +19,7 @@ trait ProfileValidationRules
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
             'bio' => $this->bioRules(),
-            'avatar' => $this->avatarRules()
+            'avatar' => $this->avatarRules(),
         ];
     }
 
@@ -61,7 +61,7 @@ trait ProfileValidationRules
         return [
             'nullable',
             'string',
-            'max:500'
+            'max:500',
         ];
     }
 
@@ -76,7 +76,7 @@ trait ProfileValidationRules
             'nullable',
             'image',
             'mimes:jpeg,jpg,png,webp',
-            'max:2048'
+            'max:2048',
         ];
     }
 }

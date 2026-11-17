@@ -18,7 +18,7 @@ class Review extends Model
 
     protected $casts = [
         'rating' => 'integer',
-        'likes_count' => 'integer'
+        'likes_count' => 'integer',
     ];
 
     /** @return BelongsTo<User, $this> */

@@ -32,7 +32,7 @@ class WatchStatsService
     }
 
     /**
-     * @param Collection<int, int> $usersIds
+     * @param  Collection<int, int>  $usersIds
      * @return array<int, int>
      */
     public function watchedSeasonsCountForUsers(Collection $usersIds, Show $show): array

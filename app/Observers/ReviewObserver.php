@@ -19,7 +19,7 @@ class ReviewObserver
 
     public function updated(Review $review): void
     {
-        if($review->wasChanged('rating')) {
+        if ($review->wasChanged('rating')) {
             $this->recalculate($review->show_id);
         }
     }
@@ -28,7 +28,7 @@ class ReviewObserver
     {
         Show::where('id', $showId)->update([
             'average_rating' => Review::where('show_id', $showId)->avg('rating'),
-            'reviews_count' => Review::where('show_id', $showId)->count()
+            'reviews_count' => Review::where('show_id', $showId)->count(),
         ]);
     }
 }

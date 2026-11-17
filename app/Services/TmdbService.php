@@ -41,7 +41,7 @@ class TmdbService
     {
         return $this->request()
             ->get("/tv/$showId", [
-                'append_to_response' => 'credits'
+                'append_to_response' => 'credits',
             ])
             ->json() ?? [];
     }

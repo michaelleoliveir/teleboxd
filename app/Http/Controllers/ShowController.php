@@ -14,11 +14,11 @@ class ShowController extends Controller
         $user = Auth::user();
 
         $shows = Show::query()
-                ->with('actors')
-                ->whereNotNull(['poster_path', 'popularity', 'first_air_date'])
-                ->orderByRaw('popularity - ((CURRENT_DATE - first_air_date) * 7.5) DESC')
-                ->limit(9)
-                ->get();
+            ->with('actors')
+            ->whereNotNull(['poster_path', 'popularity', 'first_air_date'])
+            ->orderByRaw('popularity - ((CURRENT_DATE - first_air_date) * 7.5) DESC')
+            ->limit(9)
+            ->get();
 
         $actors = $shows->pluck('actors')->flatten()->unique('id')->whereNotNull('profile_path')->take(9);
 
