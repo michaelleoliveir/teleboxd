@@ -57,6 +57,13 @@ new class extends Component {
 };
 ?>
 
-<div>
-    {{-- Happiness is not something readymade. It comes from your own actions. - Dalai Lama --}}
-</div>
+<button type="button" wire:click="toggle" wire:loading.attr="disabled" wire:loading.class="opacity-50"
+    aria-pressed="{{ $liked ? 'true' : 'false' }}" @class([
+        'inline-flex cursor-pointer items-center gap-1.5 rounded-sm text-xs font-semibold transition-colors disabled:cursor-wait',
+        'text-tlbx-primary' => $liked,
+        'text-tlbx-muted hover:text-tlbx-primary' => !$liked,
+    ])>
+    <flux:icon.heart :variant="$liked ? 'solid' : 'outline'" class="size-4" />
+    <span class="sr-only">{{ __('Like') }}</span>
+    <span class="tabular-nums">{{ $likesCount }}</span>
+</button>
