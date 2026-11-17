@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['user_id', 'show_id', 'content', 'rating'])]
@@ -16,7 +17,8 @@ class Review extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'rating' => 'integer'
+        'rating' => 'integer',
+        'likes_count' => 'integer',
     ];
 
     /** @return BelongsTo<User, $this> */
@@ -29,5 +31,11 @@ class Review extends Model
     public function show(): BelongsTo
     {
         return $this->belongsTo(Show::class);
+    }
+
+    /** @return HasMany<ReviewLike, $this> */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(ReviewLike::class);
     }
 }

@@ -13,7 +13,7 @@ class Season extends Model
     protected $casts = [
         'air_date' => 'date',
         'season_number' => 'integer',
-        'episode_count' => 'integer'
+        'episode_count' => 'integer',
     ];
 
     /** @return BelongsTo<Show, $this> */

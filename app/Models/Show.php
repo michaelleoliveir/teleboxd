@@ -17,7 +17,7 @@ class Show extends Model
         'popularity' => 'decimal:4',
         'number_of_seasons' => 'integer',
         'number_of_episodes' => 'integer',
-        'episode_run_time' => 'integer'
+        'episode_run_time' => 'integer',
     ];
 
     /** @return BelongsToMany<Genre, $this> */

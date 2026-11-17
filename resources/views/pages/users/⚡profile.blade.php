@@ -256,6 +256,12 @@ new class extends Component
                                             {{ $review->content }}
                                         </p>
                                     @endif
+
+                                    <div class="mt-3 flex items-center gap-1.5 text-xs font-semibold text-tlbx-muted">
+                                        <flux:icon.heart variant="outline" class="size-4" aria-hidden="true" />
+                                        <span class="tabular-nums">{{ $review->likes_count }}</span>
+                                        <span class="sr-only">{{ __('likes') }}</span>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach

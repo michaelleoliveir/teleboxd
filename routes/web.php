@@ -18,4 +18,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('/u/{user}', 'pages::users.profile')->name('users.profile');
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

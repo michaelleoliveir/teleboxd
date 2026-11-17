@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -79,12 +79,13 @@ class User extends Authenticatable
         $initials = Str::initials($this->name, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
     }
 
     /**
      * Get the user's profile picture
+     *
      * @return Attribute<string|null, never>
      */
     protected function avatarUrl(): Attribute
@@ -120,8 +121,6 @@ class User extends Authenticatable
 
     /**
      * Get the route key for the model.
-     *
-     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -130,8 +129,6 @@ class User extends Authenticatable
 
     /**
      * Get a unique slug from the user's name.
-     *
-     * @return string
      */
     public function uniqueSlugFromName(): string
     {
@@ -140,12 +137,13 @@ class User extends Authenticatable
         $i = 1;
         while (static::query()
             ->where('slug', $slug)
-            ->when($this->exists, fn($q) => $q->where('id', '!=', $this->id))
+            ->when($this->exists, fn ($q) => $q->where('id', '!=', $this->id))
             ->exists()
         ) {
             $slug = "{$base}-{$i}";
             $i++;
         }
+
         return $slug;
     }
 }

@@ -78,6 +78,10 @@ new class extends Component {
                                 {{ $review->content }}
                             </p>
                         @endif
+
+                        <div class="mt-3">
+                            <livewire:pages::shows.like-button :review="$review" :key="'like-' . $review->id" />
+                        </div>
                     </div>
                 </div>
             @endforeach
