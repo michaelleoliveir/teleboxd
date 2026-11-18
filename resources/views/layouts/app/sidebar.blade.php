@@ -17,6 +17,9 @@
                     <flux:sidebar.item icon="layout-grid" :href="route('shows.catalog')" :current="request()->routeIs('shows.catalog')" wire:navigate>
                         {{ __('Shows') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="fire" :href="route('reviews.popular')" :current="request()->routeIs('reviews.popular')" wire:navigate>
+                        {{ __('Popular reviews') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
