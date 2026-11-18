@@ -32,11 +32,11 @@ class ShowController extends Controller
     public function show(Show $show): View
     {
         $show->load([
-            'genres', 
-            'actors', 
+            'genres',
+            'actors',
             'reviews' => fn ($q) => $q->withLikedBy(Auth::id())->latest(),
-            'reviews.user', 
-            'seasons'
+            'reviews.user',
+            'seasons',
         ]);
 
         return view('show', compact('show'));

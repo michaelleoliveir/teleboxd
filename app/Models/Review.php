@@ -46,6 +46,6 @@ class Review extends Model
      */
     public function scopeWithLikedBy(Builder $query, ?int $userId): Builder
     {
-        return $query->withExists(['likes as liked_by_me' => fn($q) => $q->where('user_id', $userId)]);
+        return $query->withExists(['likes as liked_by_me' => fn ($q) => $q->where('user_id', $userId)]);
     }
 }
