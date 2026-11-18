@@ -13,7 +13,10 @@ new class extends Component {
 
     public function mount(): void
     {
-        $this->liked = Auth::check() && $this->review->likes()->where('user_id', Auth::id())->exists();
+        $this->liked = $this->review->hasAttribute('liked_by_me') 
+            ? $this->review->liked_by_me 
+            : Auth::check() && $this->review->likes()->where('user_id', Auth::id())->exists();
+
         $this->likesCount = $this->review->likes_count;
     }
 

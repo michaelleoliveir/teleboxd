@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Observers\ReviewObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,5 +38,14 @@ class Review extends Model
     public function likes(): HasMany
     {
         return $this->hasMany(ReviewLike::class);
+    }
+
+    /**
+     * @param  Builder<Review>  $query
+     * @return Builder<Review>
+     */
+    public function scopeWithLikedBy(Builder $query, ?int $userId): Builder
+    {
+        return $query->withExists(['likes as liked_by_me' => fn($q) => $q->where('user_id', $userId)]);
     }
 }
