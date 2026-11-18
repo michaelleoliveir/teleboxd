@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::livewire('/shows', 'pages::shows.catalog')->name('shows.catalog');
     Route::livewire('/u/{user}', 'pages::users.profile')->name('users.profile');
+    Route::livewire('/reviews/popular', 'pages::reviews.popular')->name('reviews.popular');
 });
 
 require __DIR__.'/settings.php';

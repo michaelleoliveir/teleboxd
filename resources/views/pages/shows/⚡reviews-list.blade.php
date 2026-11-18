@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Models\Show;
@@ -18,7 +19,10 @@ new class extends Component {
     #[On('review-created')]
     public function refresh(): void
     {
-        $this->show->load('reviews.user');
+        $this->show->load([
+            'reviews' => fn ($q) => $q->withLikedBy(Auth::id())->latest(),
+            'reviews.user'
+        ]);
         $this->calculateSeasonsWatchedMap();
     }
 
