@@ -147,6 +147,10 @@ new class extends Component
                             class="text-[10px] tracking-[0.15em] text-tlbx-muted uppercase underline-offset-4 hover:text-tlbx-primary hover:underline">
                             {{ __('Edit profile') }}
                         </a>
+                    @else
+                        <div class="self-center">
+                            <livewire:pages::users.follow-button :user="$user" />
+                        </div>
                     @endif
                 </div>
 
