@@ -119,6 +119,18 @@ class User extends Authenticatable
         return $this->belongsToMany(Season::class, 'watched_seasons')->withTimestamps()->withPivot('last_watched_episode');
     }
 
+    /** @return BelongsToMany<User, $this> */
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id')->withTimestamps();
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id')->withTimestamps();
+    }
+
     /**
      * Get the route key for the model.
      */
