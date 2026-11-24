@@ -155,11 +155,12 @@ new class extends Component
                 </div>
 
                 @if ($user->bio)
-                    <p class="mt-1.5 flex max-w-lg items-center gap-2.5">
-                        <span class="w-px shrink-0 self-stretch bg-tlbx-border"></span>
-                        <span class="font-serif text-sm leading-snug text-tlbx-muted italic whitespace-pre-line">{{ trim($user->bio) }}</span>
-                    </p>
+                    <p class="mt-1.5 max-w-lg font-serif text-sm leading-snug text-tlbx-muted italic whitespace-pre-line">{{ trim($user->bio) }}</p>
                 @endif
+
+                <div class="mt-2.5">
+                    <livewire:pages::users.follow-stats :user="$user" />
+                </div>
             </div>
         </div>
 

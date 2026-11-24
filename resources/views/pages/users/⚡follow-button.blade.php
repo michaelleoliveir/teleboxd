@@ -30,6 +30,7 @@ new class extends Component
             Auth::user()->following()->detach($this->user->id);
             
             $this->following = false;
+            $this->dispatch('follow-toggled');
             return;
         }
 
@@ -40,6 +41,7 @@ new class extends Component
         }
 
         $this->following = true;
+        $this->dispatch('follow-toggled');
     }
 
 };
