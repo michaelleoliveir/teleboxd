@@ -31,12 +31,14 @@ new class extends Component
 ?>
 
 <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-tlbx-muted">
-    <span>
+    <a href="{{ route('users.follows', ['user' => $user, 'type' => 'following']) }}" wire:navigate
+        class="underline-offset-4 transition-colors hover:text-tlbx-primary hover:underline">
         <span class="font-semibold text-zinc-900 tabular-nums dark:text-white">{{ $this->followingCount }}</span>
         {{ __('following') }}
-    </span>
-    <span>
+    </a>
+    <a href="{{ route('users.follows', ['user' => $user, 'type' => 'followers']) }}" wire:navigate
+        class="underline-offset-4 transition-colors hover:text-tlbx-primary hover:underline">
         <span class="font-semibold text-zinc-900 tabular-nums dark:text-white">{{ $this->followersCount }}</span>
         {{ trans_choice('follower|followers', $this->followersCount) }}
-    </span>
+    </a>
 </div>

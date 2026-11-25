@@ -9,10 +9,14 @@ new class extends Component
 {
     public User $user;
     public bool $following = false;
+    public bool $compact = false;
 
     public function mount(): void
     {
-        $this->following = Auth::check() && Auth::user()->following()->whereKey($this->user->id)->exists();
+        $this->following = $this->user->hasAttribute('followed_by_me')
+            ? $this->user->followed_by_me
+            : Auth::check() && Auth::user()->following()->whereKey($this->user->id)->exists();
+
     }
 
     public function toggle(): void
@@ -49,11 +53,22 @@ new class extends Component
 
 <button type="button" wire:click="toggle" wire:loading.attr="disabled"
     aria-pressed="{{ $following ? 'true' : 'false' }}" @class([
-        'group inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-3 py-1 text-[10px] font-semibold tracking-[0.15em] uppercase transition-colors disabled:cursor-wait disabled:opacity-50',
-        'border-transparent bg-tlbx-primary/15 text-tlbx-primary hover:border-tlbx-border hover:bg-transparent hover:text-tlbx-muted' => $following,
+        'group inline-flex cursor-pointer items-center justify-center border transition-colors disabled:cursor-wait disabled:opacity-50',
+        'size-8 rounded-full' => $compact,
+        'gap-1.5 rounded-sm px-3 py-1 text-[10px] font-semibold tracking-[0.15em] uppercase' => ! $compact,
+        'border-transparent bg-tlbx-primary text-white hover:bg-tlbx-border' => $following && $compact,
+        'border-transparent bg-tlbx-primary/15 text-tlbx-primary hover:border-tlbx-border hover:bg-transparent hover:text-tlbx-muted' => $following && ! $compact,
         'border-tlbx-border text-zinc-900 hover:border-tlbx-primary hover:text-tlbx-primary dark:text-white' => ! $following,
     ])>
-    @if ($following)
+    @if ($compact)
+        <span class="sr-only">{{ __('Follow :name', ['name' => $user->name]) }}</span>
+        @if ($following)
+            <flux:icon.check variant="micro" class="size-5 group-hover:hidden" />
+            <flux:icon.x-mark variant="micro" class="hidden size-5 group-hover:block" />
+        @else
+            <flux:icon.plus variant="micro" class="size-5" />
+        @endif
+    @elseif ($following)
         <flux:icon.check variant="micro" class="size-3 group-hover:hidden" />
         <span class="group-hover:hidden">{{ __('Following') }}</span>
         <span class="hidden group-hover:inline">{{ __('Unfollow') }}</span>
