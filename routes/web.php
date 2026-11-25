@@ -16,6 +16,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::livewire('/shows', 'pages::shows.catalog')->name('shows.catalog');
     Route::livewire('/u/{user}', 'pages::users.profile')->name('users.profile');
+    Route::livewire('/u/{user}/{type}', 'pages::users.follows')
+        ->whereIn('type', ['following', 'followers'])
+        ->name('users.follows');
     Route::livewire('/reviews/popular', 'pages::reviews.popular')->name('reviews.popular');
 });
 

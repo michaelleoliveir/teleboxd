@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -117,6 +118,27 @@ class User extends Authenticatable
     public function watchedSeasons(): BelongsToMany
     {
         return $this->belongsToMany(Season::class, 'watched_seasons')->withTimestamps()->withPivot('last_watched_episode');
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id')->withTimestamps();
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id')->withTimestamps();
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
+    public function scopeWithFollowedBy(Builder $query, ?int $userId): Builder
+    {
+        return $query->withExists(['followers as followed_by_me' => fn ($q) => $q->where('follower_id', $userId)]);
     }
 
     /**
