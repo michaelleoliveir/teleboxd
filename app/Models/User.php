@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -139,6 +140,24 @@ class User extends Authenticatable
     public function scopeWithFollowedBy(Builder $query, ?int $userId): Builder
     {
         return $query->withExists(['followers as followed_by_me' => fn ($q) => $q->where('follower_id', $userId)]);
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
+    public function scopeWithListStats(Builder $query): Builder
+    {
+        return $query->withCount(['followers', 'following', 'reviews', 'favorites', 'watchedSeasons as watched_count' => fn ($q) => $q->select(DB::raw('count(distinct seasons.show_id)'))]);
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
+    public function scopeMembersFor(Builder $query, int $userId): Builder
+    {
+        return $query->whereKeyNot($userId)->withFollowedBy($userId);
     }
 
     /**

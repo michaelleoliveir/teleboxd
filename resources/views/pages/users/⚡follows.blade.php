@@ -6,7 +6,6 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -29,7 +28,7 @@ new class extends Component
 
         return $relation
             ->withFollowedBy(Auth::id())
-            ->withCount(['followers', 'following', 'reviews', 'favorites', 'watchedSeasons as watched_count' => fn ($q) => $q->select(DB::raw('count(distinct seasons.show_id)'))])
+            ->withListStats()
             ->orderByPivot('id', 'desc')
             ->paginate(20);
     }
